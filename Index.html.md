@@ -2,185 +2,161 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Rivelo</title>
+<title>Rivelo Proveedores</title>
 <style>
-/* --- General --- */
-body {
-  font-family: Arial, sans-serif;
+body{
   margin:0;
-  background: linear-gradient(135deg,#1e3c72,#2a5298);
-  color:#333;
-}
-header {
-  background:#000;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
   color:#fff;
-  padding:20px;
+  overflow-x:hidden;
+}
+header{
   text-align:center;
-  font-size:28px;
-  letter-spacing:2px;
+  padding:25px;
+  font-size:34px;
+  font-weight:bold;
+  letter-spacing:3px;
+  background:#000;
 }
-.container{
-  max-width:1000px;
-  margin:auto;
+.container{max-width:1100px;margin:auto;padding:20px}
+.welcome{
+  background:#ffffff;
+  color:#000;
   padding:20px;
-}
-
-/* --- Bienvenida --- */
-#welcome{
-  background: #fff;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
+  border-radius:12px;
   text-align:center;
-  font-size:20px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* --- Categorías --- */
-.section{
-  margin-bottom:30px;
+  margin-bottom:25px;
+  animation:fadeIn 1s ease-in-out;
 }
 .section h2{
-  color:#fff;
-  margin-bottom:15px;
+  border-left:6px solid #25D366;
+  padding-left:10px;
 }
 .card{
   background:#fff;
-  border-radius:10px;
-  padding:15px;
-  margin:10px 0;
-  box-shadow:0 5px 15px rgba(0,0,0,0.2);
-  position:relative;
-}
-.card h3{margin-top:0;}
-.card p{margin:5px 0;}
-.card .price{
-  font-weight:bold;
   color:#000;
+  border-radius:12px;
+  padding:15px;
+  margin:15px 0;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  transition:0.3s;
 }
-.card button{
-  background:#000;
-  color:#fff;
-  border:none;
+.card:hover{transform:scale(1.03)}
+.price{font-weight:bold;margin:8px 0}
+button{
   padding:10px 15px;
+  border:none;
   border-radius:6px;
   cursor:pointer;
   font-weight:bold;
-  margin-top:10px;
-}
-
-/* --- WhatsApp --- */
-.whatsapp-btn{
-  text-align:center;
-  margin:30px 0;
-}
-.whatsapp-btn a{
-  background:#25D366;
+  background:#000;
   color:#fff;
-  padding:12px 25px;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:bold;
-  font-size:18px;
+}
+.vip{
+  border:3px solid gold;
+}
+#adminLogin{
+  text-align:center;
+  margin:20px 0;
+}
+#adminPanel{
+  display:none;
+  background:#fff;
+  color:#000;
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:30px;
+}
+input,textarea{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
 }
 </style>
 </head>
 <body>
 
-<header>RIVelo</header>
-
+<header>RIVELO</header>
 <div class="container">
 
-<!-- Bienvenida -->
-<div id="welcome">
-  Bienvenido a Rivelo, la fuente privada de proveedores reales. Explora nuestros packs y consigue acceso a proveedores confiables al instante.
+<div class="welcome">
+Bienvenido a Rivelo, la fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
 </div>
 
-<!-- Categorías -->
-<div class="section" id="españoles">
-  <h2>🇪🇸 Proveedores Españoles</h2>
+<!-- 🔐 LOGIN ADMIN -->
+<div id="adminLogin">
+  <input type="password" id="pass" placeholder="Contraseña administrador">
+  <button onclick="login()">Entrar al panel</button>
 </div>
 
-<div class="section" id="chinos">
-  <h2>🇨🇳 Proveedores Chinos</h2>
+<!-- 🛠 PANEL ADMIN -->
+<div id="adminPanel">
+  <h3>Editar Packs</h3>
+  <textarea id="dataEdit" rows="10"></textarea>
+  <button onclick="guardarCambios()">Guardar cambios</button>
 </div>
 
-<div class="section" id="packs">
-  <h2>📦 Packs por categoría</h2>
-</div>
-
-<div class="section" id="vip">
-  <h2>⭐ Pack VIP (Todos los proveedores)</h2>
-</div>
-
-<div class="whatsapp-btn">
-  <a href="https://wa.me/34610387701" target="_blank">Contactar por WhatsApp</a>
-</div>
+<!-- 📦 SECCIONES -->
+<div id="contenido"></div>
 
 </div>
 
 <script>
-// 🔹 Datos de los proveedores y packs
-const proveedores = {
-  espanoles:[
-    {nombre:"Perfumes Español", precio:"19,99€"}
-  ],
-  chinos:[
-    {nombre:"Perfumes 1 y 2", precio:"19,99€"},
-    {nombre:"Relojes y G-Shock", precio:"15,99€"},
-    {nombre:"Tecnología / iPhone / AirPods / Mandos", precio:"30€"},
-    {nombre:"Zapatillas", precio:"15,99€"},
-    {nombre:"Ropa", precio:"15,99€"},
-    {nombre:"Fútbol", precio:"19,99€"},
-    {nombre:"Lujo / LV / Accesorios", precio:"25€"},
-    {nombre:"Vapers", precio:"15,20€"}
-  ],
-  vip:[
-    {nombre:"Pack VIP (Todos los proveedores)", precio:"150€"}
-  ]
-};
+const PASSWORD="Rivelo#9274_PROveedores!";
 
-// 🔹 Función para crear las tarjetas de los proveedores
-function mostrarProveedores(){
-  const espanolesDiv = document.getElementById('españoles');
-  proveedores.espanoles.forEach(p=>{
-    espanolesDiv.innerHTML += `
-    <div class="card">
-      <h3>${p.nombre}</h3>
-      <p class="price">Precio: ${p.precio}</p>
-      <button onclick="comprar('${p.nombre}')">Comprar</button>
-    </div>`;
-  });
+// Datos editables
+let packs = JSON.parse(localStorage.getItem("riveloPacks")) || [
+{cat:"🇪🇸 Español",nombre:"Perfumes Español",precio:"19,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Perfumes 1 y 2",precio:"19,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Relojes y G-Shock",precio:"15,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Tecnología / iPhone / AirPods",precio:"30€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Zapatillas",precio:"15,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Ropa",precio:"15,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Fútbol",precio:"19,99€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Lujo / LV",precio:"25€",numeros:""},
+{cat:"🇨🇳 Chinos",nombre:"Vapers",precio:"15,20€",numeros:""},
+{cat:"⭐ VIP",nombre:"Todos los proveedores",precio:"150€",numeros:""}
+];
 
-  const chinosDiv = document.getElementById('chinos');
-  proveedores.chinos.forEach(p=>{
-    chinosDiv.innerHTML += `
-    <div class="card">
-      <h3>${p.nombre}</h3>
-      <p class="price">Precio: ${p.precio}</p>
-      <button onclick="comprar('${p.nombre}')">Comprar</button>
-    </div>`;
-  });
-
-  const vipDiv = document.getElementById('vip');
-  proveedores.vip.forEach(p=>{
-    vipDiv.innerHTML += `
-    <div class="card">
-      <h3>${p.nombre}</h3>
-      <p class="price">Precio: ${p.precio}</p>
-      <button onclick="comprar('${p.nombre}')">Comprar</button>
-    </div>`;
-  });
+function mostrar(){
+let div=document.getElementById("contenido");
+div.innerHTML="";
+packs.forEach(p=>{
+div.innerHTML+=`
+<div class="card ${p.cat.includes('VIP')?'vip':''}">
+<h3>${p.cat} - ${p.nombre}</h3>
+<p class="price">Precio: ${p.precio}</p>
+<button onclick="comprar('${p.nombre}')">Comprar</button>
+</div>`;
+});
 }
 
-// 🔹 Función de compra (aún de ejemplo, luego conectas Payhip/PayPal)
 function comprar(nombre){
-  alert(`Has elegido el pack: ${nombre}\nEl siguiente paso sería pagar y recibir el PDF automáticamente.`);
-  // Aquí después pondrás: redirigir a Payhip con el PDF del pack
+alert("Aquí luego conectas el botón al enlace de Payhip del pack: "+nombre);
 }
 
-// 🔹 Mostrar proveedores al cargar
-mostrarProveedores();
+function login(){
+if(pass.value===PASSWORD){
+adminPanel.style.display="block";
+dataEdit.value=JSON.stringify(packs,null,2);
+}else{
+alert("Contraseña incorrecta");
+}
+}
+
+function guardarCambios(){
+packs=JSON.parse(dataEdit.value);
+localStorage.setItem("riveloPacks",JSON.stringify(packs));
+mostrar();
+alert("Cambios guardados");
+}
+
+mostrar();
 </script>
 
 </body>
