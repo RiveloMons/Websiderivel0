@@ -6,65 +6,89 @@
 <title>Rivelo Mons</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#000;color:#fff}
 
 /* MENU */
-.menu{position:fixed;top:15px;left:15px;z-index:9999;cursor:pointer}
-.menu div{width:30px;height:3px;background:#fff;margin:6px 0}
+.menu{position:fixed;top:15px;left:15px;z-index:1000;cursor:pointer}
+.menu div{width:32px;height:3px;background:#fff;margin:7px 0}
 
 .sidebar{
 position:fixed;left:-260px;top:0;width:250px;height:100%;
-background:#111;border-right:2px solid #fff;padding:30px;
-transition:.4s;z-index:9998
+background:#000;border-right:2px solid #fff;padding:40px 20px;
+transition:.4s;z-index:999
 }
-.sidebar a{display:block;color:#fff;text-decoration:none;margin:20px 0;font-size:18px}
+.sidebar a{
+display:block;color:#fff;text-decoration:none;
+margin:25px 0;font-size:18px;border-bottom:1px solid #fff;padding-bottom:8px
+}
+.sidebar.active{left:0}
 
 /* SECCIONES */
-.section{display:none;padding:100px 20px;min-height:100vh}
+.section{display:none;padding:90px 20px;min-height:100vh}
 .activeSection{display:block}
 
 /* PORTADA */
-.portada{position:relative;height:100vh;border:2px solid #fff;overflow:hidden;animation:zoom 15s ease-in-out infinite alternate}
-.portada img{width:100%;height:100%;object-fit:cover}
-.overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35)}
-@keyframes zoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+.portada img{
+width:100%;max-height:90vh;object-fit:cover;
+border-bottom:2px solid #fff
+}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;margin-top:40px}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:18px;margin-top:40px
+}
 .card{
 border:2px solid #fff;padding:15px;text-align:center;
-border-radius:8px;background:#111;transition:.3s
+border-radius:8px;transition:.3s;background:#000
 }
-.card:hover{border-color:gold;transform:scale(1.05)}
-.card img{width:100%;height:120px;object-fit:contain;background:#fff;border-radius:6px}
+.card:hover{transform:scale(1.04)}
+.card img{
+width:100%;height:120px;object-fit:contain;
+background:#fff;border-radius:6px
+}
 .card button{
-margin-top:10px;padding:12px;border:none;
-background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:15px
+margin-top:10px;padding:14px;border:none;
+background:#fff;color:#000;font-weight:bold;
+cursor:pointer;width:100%;font-size:15px
 }
 
-/* DETALLE */
+/* DETALLE PACK */
 .packDetail{text-align:center;max-width:800px;margin:auto}
-.packDetail img{width:220px;background:#fff;border-radius:10px;margin:20px 0}
+.packDetail img{
+width:230px;background:#fff;border-radius:10px;margin:20px 0
+}
 .bigBtn{
 padding:18px;margin:12px 0;width:100%;
 font-size:18px;font-weight:bold;border:none;
-background:gold;color:#000;cursor:pointer
+background:#fff;color:#000;cursor:pointer
 }
 
 /* CARRITO */
 .cartItem{
-border:1px solid #fff;margin:12px 0;padding:12px;border-radius:6px
+border:1px solid #fff;margin:15px 0;padding:15px;border-radius:8px
 }
-.flex{display:flex;justify-content:space-between;gap:10px}
-.flex button{
-padding:12px;border:none;background:gold;color:#000;font-weight:bold;width:48%
+.flex{display:flex;gap:10px}
+.cartItem button{
+padding:14px;border:none;background:#fff;
+color:#000;font-weight:bold;width:100%
 }
+
+/* FOOTER */
+footer{
+margin-top:60px;padding:30px 10px;border-top:2px solid #fff;
+text-align:center;font-size:14px
+}
+footer a{color:#fff;text-decoration:none;margin:0 10px}
 </style>
 </head>
 <body>
 
-<div class="menu" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+<div class="menu" onclick="toggleMenu()">
+<div></div><div></div><div></div>
+</div>
 
 <div class="sidebar" id="sidebar">
 <a onclick="go('inicio')">Inicio</a>
@@ -72,9 +96,8 @@ padding:12px;border:none;background:gold;color:#000;font-weight:bold;width:48%
 <a onclick="go('carrito')">Carrito</a>
 </div>
 
-<!-- PORTADA -->
+<!-- INICIO -->
 <div id="inicio" class="section activeSection portada">
-<div class="overlay"></div>
 <img src="portada.jpg">
 </div>
 
@@ -95,27 +118,37 @@ padding:12px;border:none;background:gold;color:#000;font-weight:bold;width:48%
 <div id="cartItems"></div>
 </div>
 
+<footer>
+Síguenos en redes:<br><br>
+<a href="#">Instagram</a> |
+<a href="#">TikTok</a> |
+<a href="#">WhatsApp</a>
+</footer>
+
 <script>
 let packs=[
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png"},
-{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/3105/3105807.png"},
-{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/1077/1077063.png"},
+{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png"},
+{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png"},
 {name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png"},
 {name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"},
-{name:"Proveedor Tecnología",price:30,img:"https://cdn-icons-png.flaticon.com/512/2721/2721297.png"},
+{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png"},
 {name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png"},
-{name:"Proveedor Relojes",price:18,img:"https://cdn-icons-png.flaticon.com/512/992/992700.png"},
+{name:"Proveedor Relojes",price:18,img:"reloj.jpg"},
 {name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png"},
-{name:"Todos los proveedores (VIP)",price:45,img:"https://cdn-icons-png.flaticon.com/512/616/616490.png"}
+{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg"}
 ];
 
 let cart=[];
 
-function toggleMenu(){sidebar.classList.toggle("active")}
+function toggleMenu(){
+document.getElementById("sidebar").classList.toggle("active")
+}
+
 function go(id){
 document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'))
 document.getElementById(id).classList.add('activeSection')
-sidebar.classList.remove("active")
+toggleMenu()
 }
 
 function renderPacks(){
@@ -140,7 +173,7 @@ packDetail.innerHTML=`
 <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
 <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-<button class="bigBtn" onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
+<button class="bigBtn">Pronto se podrá pagar</button>
 `;
 go('detalle')
 }
@@ -148,11 +181,11 @@ go('detalle')
 function addCart(i){
 cart.push(packs[i]);
 renderCart();
-alert("Producto añadido al carrito");
+alert("Producto añadido al carrito")
 }
 
-function removeItem(index){
-cart.splice(index,1);
+function removeItem(i){
+cart.splice(i,1);
 renderCart();
 }
 
@@ -164,8 +197,8 @@ cartItems.innerHTML+=`
 <h3>${p.name}</h3>
 <p>${p.price}€</p>
 <div class="flex">
-<button onclick="removeItem(${i})">🗑️ Eliminar</button>
-<button onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
+<button onclick="removeItem(${i})">Eliminar</button>
+<button>Comprar</button>
 </div>
 </div>`
 })
