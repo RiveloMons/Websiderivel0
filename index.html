@@ -2,420 +2,182 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>Rivelo Proveedores</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rivelo Mons - Packs de Proveedores</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* 🔹 Estilo general */
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#000;
-  color:#fff;
-  overflow-x:hidden;
-}
+/* --- RESET --- */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#000;color:#fff;overflow-x:hidden;}
+
+/* --- MENU --- */
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px;
-  font-size:28px;
-  letter-spacing:2px;
-  background:#111;
-  position:fixed;
-  width:100%;
-  z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 20px;background:#111;position:fixed;width:100%;top:0;z-index:100;
 }
-.menu-icon{
-  font-size:28px;
-  cursor:pointer;
-}
-nav{
-  display:none;
-  position:absolute;
-  top:70px;
-  left:0;
-  background:#111;
-  width:100%;
-  flex-direction:column;
-  padding:20px;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  padding:10px 0;
-  font-size:18px;
-}
-nav a:hover{
-  color:#FFD700;
-}
-.search-bar{
-  display:flex;
-  align-items:center;
-  border:1px solid #fff;
-  border-radius:6px;
-  padding:5px;
-}
-.search-bar input{
-  border:none;
-  outline:none;
-  background:none;
-  color:#fff;
-  width:120px;
-}
-.search-bar i{
-  margin-left:5px;
-  color:#fff;
-}
+header h1{color:#FFD700;letter-spacing:2px;}
+.menu-btn{font-size:28px;cursor:pointer;}
+nav{position:fixed;top:0;left:-250px;width:250px;height:100%;background:#111;transition:0.5s;padding-top:60px;z-index:101;}
+nav a{display:block;color:#fff;padding:15px 20px;text-decoration:none;transition:0.3s;}
+nav a:hover{background:#222;}
+nav.show{left:0;}
 
-/* 🔹 Contenedor principal */
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:140px 20px 60px 20px;
-}
+/* --- CONTENEDORES --- */
+.container{max-width:1200px;margin:100px auto 50px;padding:20px;}
+.welcome{font-size:32px;text-align:center;padding:50px 20px;border:2px solid #FFD700;border-radius:15px;margin-bottom:40px;background:rgba(255,215,0,0.05);animation:fadeIn 1s;}
+footer{background:#111;padding:30px 20px;text-align:center;margin-top:50px;border-top:2px solid #FFD700;}
+footer a{margin:0 10px;color:#FFD700;text-decoration:none;font-size:22px;}
+footer a:hover{color:#fff;}
 
-/* 🔹 Bienvenida */
-#welcome{
-  text-align:center;
-  font-size:36px;
-  margin-bottom:60px;
-  animation:fadeIn 1s ease-in-out;
-}
-#welcome img{
-  max-width:150px;
-  display:block;
-  margin:0 auto 20px auto;
-  border:2px solid #fff;
-  border-radius:12px;
-  padding:5px;
-}
+/* --- PACKS --- */
+.pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+.pack{background:#111;border:2px solid #fff;border-radius:15px;overflow:hidden;transition:0.3s;position:relative;}
+.pack img{width:100%;height:180px;object-fit:cover;}
+.pack h3{text-align:center;padding:10px;font-size:20px;}
+.pack .price{text-align:center;font-weight:bold;font-size:18px;margin-bottom:10px;}
+.pack button{margin:5px;width:calc(50% - 10px);padding:10px;font-weight:bold;border:none;border-radius:8px;cursor:pointer;transition:0.3s;}
+.pack button.buy{background:#FFD700;color:#000;}
+.pack button.cart{background:#fff;color:#000;}
+.pack:hover{transform:scale(1.03);box-shadow:0 0 15px #FFD700;}
 
-/* 🔹 Tarjetas */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-}
-.card{
-  background:#111;
-  border:2px solid #fff;
-  border-radius:12px;
-  padding:20px;
-  text-align:center;
-  transition:0.4s;
-  cursor:pointer;
-}
-.card:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 20px #FFD700;
-}
-.card img{
-  max-width:100px;
-  margin-bottom:10px;
-}
-.vip{
-  border:3px solid gold;
-  box-shadow:0 0 20px gold;
-  transform:scale(1.05);
-}
+/* --- VIP --- */
+.pack.vip{border:3px solid gold;animation:glow 2s infinite alternate;}
+@keyframes glow{0%{box-shadow:0 0 10px #FFD700;}100%{box-shadow:0 0 25px #FFD700;}}
 
-/* 🔹 Botones */
-button{
-  padding:10px 15px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
-  margin:5px;
-}
-.buy-btn{
-  background:#FFD700;
-  color:#000;
-}
-.cart-btn{
-  background:#fff;
-  color:#000;
-}
+/* --- MODAL PACK --- */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);justify-content:center;align-items:center;overflow-y:auto;z-index:200;}
+.modal-content{background:#111;padding:30px;border-radius:15px;width:90%;max-width:800px;position:relative;}
+.modal-content h2{color:#FFD700;text-align:center;margin-bottom:20px;}
+.modal-content p{margin:10px 0;line-height:1.5;font-size:16px;}
+.modal-content .actions{display:flex;justify-content:space-between;margin-top:20px;}
+.modal-content button{flex:1;margin:0 5px;padding:12px;font-weight:bold;border:none;border-radius:8px;cursor:pointer;transition:0.3s;}
+.modal-content button.buy{background:#FFD700;color:#000;}
+.modal-content button.cart{background:#fff;color:#000;}
+.close-btn{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;color:#FFD700;}
 
-/* 🔹 Carrito */
-#cart{
-  display:none;
-  background:#111;
-  padding:20px;
-  border-radius:12px;
-  margin-top:30px;
-}
-.cart-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-bottom:1px solid #fff;
-  padding:10px 0;
-}
+/* --- CARRITO --- */
+#cart-counter{background:red;color:#fff;font-weight:bold;border-radius:50%;width:25px;height:25px;text-align:center;line-height:25px;position:absolute;top:5px;right:5px;font-size:14px;}
 
-/* 🔹 Ficha pack ampliada */
-#packModal{
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.95);
-  color:#fff;
-  overflow:auto;
-  z-index:2000;
-  padding:50px 20px;
-}
-#packModal .content{
-  max-width:700px;
-  margin:auto;
-  text-align:center;
-}
-#packModal img{max-width:150px;margin-bottom:20px;}
-#packModal h2{color:#FFD700;}
-#packModal p{margin:10px 0;}
-
-/* 🔹 Admin */
-#adminPanel{
-  display:none;
-  background:#111;
-  padding:20px;
-  border-radius:12px;
-  margin:30px 0;
-}
-#adminPanel textarea{
-  width:100%;
-  height:150px;
-  background:#000;
-  color:#fff;
-  border:1px solid #fff;
-  border-radius:8px;
-  padding:10px;
-}
-.admin-controls button{
-  background:#FFD700;
-  color:#000;
-  margin:3px;
-}
-
-/* 🔹 Footer */
-footer{
-  background:#111;
-  padding:30px 20px;
-  text-align:center;
-  margin-top:50px;
-  border-top:2px solid #fff;
-}
-footer a{
-  margin:0 10px;
-  color:#fff;
-  font-size:24px;
-}
-footer a:hover{color:#FFD700;}
-
-/* 🔹 Animaciones */
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
-}
-
-/* 🔹 Responsive */
-@media(max-width:600px){
-  .cards{grid-template-columns:1fr;}
-  .search-bar input{width:80px;}
-}
+/* --- ANIMACIONES --- */
+@keyframes fadeIn{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
-  <div class="search-bar">
-    <input type="text" id="search" placeholder="Buscar...">
-    <i class="fas fa-search"></i>
-  </div>
+  <h1>Rivelo Mons</h1>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
 </header>
 
 <nav id="menu">
-  <a href="#welcome" onclick="toggleMenu()">Inicio</a>
-  <a href="#catalogo" onclick="toggleMenu()">Catálogo</a>
-  <a href="#cart" onclick="toggleMenu()">Carrito <span id="cartCount">(0)</span></a>
-  <a href="#adminSection" onclick="toggleMenu()">Administrador</a>
+  <a href="#inicio">Inicio</a>
+  <a href="#catalogo">Catálogo</a>
+  <a href="#carrito">Carrito <span id="cart-counter">0</span></a>
+  <a href="admin.html">Administrador</a>
 </nav>
 
 <div class="container">
-  <div id="welcome">
-    <img src="https://i.ibb.co/7X9ZhHZ/logo-black-white.png" alt="Rivelo Mons Logo">
-    Bienvenido a Rivelo Mons, la fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
+  <div class="welcome" id="inicio">
+    Bienvenido a Rivelo, tu fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
   </div>
 
-  <!-- Catálogo -->
-  <div id="catalogo" class="cards"></div>
-
-  <!-- Carrito -->
-  <div id="cart">
-    <h3>Carrito</h3>
-    <div id="cart-items"></div>
-    <button onclick="alert('Pronto se podrán pagar los packs por Payhip!')">Comprar todo</button>
-  </div>
-
-  <!-- Admin -->
-  <div id="adminSection" style="margin-top:40px">
-    <input type="password" id="adminPass" placeholder="Contraseña administrador">
-    <button onclick="loginAdmin()">Entrar</button>
-
-    <div id="adminPanel">
-      <h3>Editar Packs</h3>
-      <textarea id="adminData"></textarea>
-      <div class="admin-controls">
-        <button onclick="subirPrecio()">+</button>
-        <button onclick="bajarPrecio()">-</button>
-      </div>
-      <button onclick="guardarCambios()">Guardar cambios</button>
-    </div>
-  </div>
+  <h2 id="catalogo" style="color:#FFD700;margin-bottom:20px;">Catálogo de Packs</h2>
+  <div class="pack-grid" id="packs"></div>
 </div>
 
-<!-- Modal pack -->
-<div id="packModal">
-  <div class="content" id="packContent">
-    <button onclick="cerrarModal()">Cerrar X</button>
-    <img id="modalImg">
-    <h2 id="modalTitle"></h2>
-    <p id="modalDesc">No solo recibes el proveedor, también recibirás:<br>CONTACTOS AL INSTANTE<br>SEGURO ANTIFALLOS<br>GUÍA PARA DESCUENTOS EXCLUSIVOS<br>PASO A PASO DE 0 a 5K AL MES<br>SOPORTE 24/7<br>MEJORES RELACIÓN CALIDAD-PRECIO</p>
-    <button class="cart-btn" onclick="agregarCarritoModal()">Agregar al carrito</button>
-    <button class="buy-btn" onclick="comprarPackModal()">Comprar con Payhip</button>
-    <h3>Preguntas frecuentes:</h3>
-    <p><strong>¿Cómo recibo los contactos?</strong> Al instante en tu Gmail.</p>
-    <p><strong>¿Qué es un proveedor privado y porqué es valioso?</strong> Contactos exclusivos a precios bajos, empresas certificadas.</p>
-    <p><strong>¿Sois fiables?</strong> +3 años en el sector, Instagram: @riveloms</p>
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalContent">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div id="modalData"></div>
   </div>
 </div>
 
 <footer>
-  <a href="https://instagram.com/riveloms" target="_blank"><i class="fab fa-instagram"></i></a>
-  <a href="https://tiktok.com/@rivelo_ms" target="_blank"><i class="fab fa-tiktok"></i></a>
-  <p>
-    • PAGOS SEGUROS: Cumplimos la legalidad estatal.<br>
-    • PROVEEDORES PREMIUM: Los mejores calidad-precio.<br>
-    • TOP 1 DEL SECTOR: Nuevos proveedores y facturas actualizadas.<br>
-    • TRANSPARENCIA: Respuestas rápidas y asistencia máxima.
-  </p>
+  <p>Rivelo Mons © 2026</p>
+  <div>
+    <a href="https://instagram.com/riveloms" target="_blank">Instagram</a>
+    <a href="https://tiktok.com/@rivelo_ms" target="_blank">TikTok</a>
+  </div>
+  <p>• PAGOS SEGUROS • PROVEEDORES PREMIUM • TOP 1 DEL SECTOR • TRANSPARENCIA</p>
 </footer>
 
 <script>
-/* 🔹 Datos */
-const PASSWORD="Rivelo#9274_PROveedores!";
+/* --- MENÚ --- */
+function toggleMenu(){
+  document.getElementById('menu').classList.toggle('show');
+}
+
+/* --- PACKS --- */
+let cart = [];
 let packs = [
-{nombre:"Proveedor Vapers",precio:19.99,img:"https://i.ibb.co/3yZfhjB/vaper.png"},
-{nombre:"Proveedor Pulseras LV",precio:19.99,img:"https://i.ibb.co/4fz2Qkp/lv.png"},
-{nombre:"Proveedor Accesorios de lujo",precio:15.99,img:"https://i.ibb.co/H2T1kV5/luxury.png"},
-{nombre:"Proveedor Botas de fútbol",precio:30,img:"https://i.ibb.co/0GQF7Wx/football.png"},
-{nombre:"Proveedor Zapatillas",precio:15.99,img:"https://i.ibb.co/4pj0kFH/sneakers.png"},
-{nombre:"Proveedor Tecnología",precio:15.99,img:"https://i.ibb.co/6Jkq6Fq/tech.png"},
-{nombre:"Proveedor iPhones 1:1 y AirPods",precio:19.99,img:"https://i.ibb.co/vx6tYQp/iphone.png"},
-{nombre:"Proveedor Relojes",precio:25,img:"https://i.ibb.co/1n4Sx2R/watches.png"},
-{nombre:"Proveedor Perfumes",precio:15.20,img:"https://i.ibb.co/4R7jWc3/perfume.png"},
-{nombre:"Pack VIP Todos los proveedores",precio:150,img:"https://i.ibb.co/1vQGz4K/vip.png",vip:true}
+{nombre:"Proveedor VAPERS",precio:19.99,img:"https://via.placeholder.com/400x180?text=Vaper",vip:false},
+{nombre:"Proveedor Pulseras LV",precio:25,img:"https://via.placeholder.com/400x180?text=Pulseras",vip:false},
+{nombre:"Proveedor Accesorios de lujo",precio:30,img:"https://via.placeholder.com/400x180?text=Accesorios+Lujo",vip:false},
+{nombre:"Proveedor Botas de fútbol",precio:19.99,img:"https://via.placeholder.com/400x180?text=Futbol",vip:false},
+{nombre:"Proveedor Zapatillas",precio:15.99,img:"https://via.placeholder.com/400x180?text=Zapatillas",vip:false},
+{nombre:"Proveedor Tecnología",precio:30,img:"https://via.placeholder.com/400x180?text=Tecnologia",vip:false},
+{nombre:"Proveedor iPhones 1:1 y AirPods",precio:49.99,img:"https://via.placeholder.com/400x180?text=iPhone+AirPods",vip:false},
+{nombre:"Proveedor Relojes",precio:20,img:"https://via.placeholder.com/400x180?text=Relojes",vip:false},
+{nombre:"Proveedor Perfumes",precio:19.99,img:"https://via.placeholder.com/400x180?text=Perfumes",vip:false},
+{nombre:"PERFUMES ESPAÑOL",precio:19.99,img:"https://via.placeholder.com/400x180?text=Perfumes+Esp",vip:false},
+{nombre:"Proveedor Tecnología y perfumes",precio:30,img:"https://via.placeholder.com/400x180?text=Tec+Perfumes",vip:false},
+{nombre:"Todos los proveedores",precio:49.99,img:"https://via.placeholder.com/400x180?text=VIP",vip:true}
 ];
 
-let cart=[];
-let currentPack=null;
-
-/* 🔹 Menú */
-function toggleMenu(){
-  const menu=document.getElementById("menu");
-  menu.style.display=menu.style.display==="flex"?"none":"flex";
-}
-
-/* 🔹 Mostrar catálogo */
-function mostrarCatalogo(filter=""){
-  const div=document.getElementById("catalogo");
-  div.innerHTML="";
-  packs.filter(p=>p.nombre.toLowerCase().includes(filter.toLowerCase()))
-       .forEach(p=>{
-    const card=document.createElement("div");
-    card.className="card"+(p.vip?" vip":"");
-    card.innerHTML=`
-      <img src="${p.img}" alt="${p.nombre}">
-      <h3>${p.nombre}</h3>
-      <p>Precio: ${p.precio} €</p>
-      <button class="buy-btn" onclick="comprarPack('${p.nombre}')">Comprar</button>
-      <button class="cart-btn" onclick="agregarCarrito('${p.nombre}')">Agregar al carrito</button>
+function mostrarPacks(){
+  let container = document.getElementById('packs');
+  container.innerHTML="";
+  packs.forEach((p,i)=>{
+    container.innerHTML+=`
+      <div class="pack ${p.vip?'vip':''}">
+        <img src="${p.img}">
+        <h3>${p.nombre}</h3>
+        <p class="price">${p.precio} €</p>
+        <button class="buy" onclick="abrirModal(${i})">Comprar</button>
+        <button class="cart" onclick="agregarCarrito(${i})">Agregar al carrito</button>
+      </div>
     `;
-    card.onclick=()=>abrirModal(p.nombre);
-    div.appendChild(card);
   });
 }
-mostrarCatalogo();
 
-/* 🔹 Modal */
-function abrirModal(nombre){
-  const p=packs.find(x=>x.nombre===nombre);
-  currentPack=p;
-  document.getElementById("modalImg").src=p.img;
-  document.getElementById("modalTitle").innerText=p.nombre;
-  document.getElementById("packModal").style.display="block";
-}
-function cerrarModal(){document.getElementById("packModal").style.display="none";}
-
-/* 🔹 Carrito */
-function agregarCarrito(nombre){
-  const p=packs.find(x=>x.nombre===nombre);
-  cart.push(p);
-  mostrarCarrito();
-  alert("Producto agregado al carrito");
-}
-function agregarCarritoModal(){
-  if(currentPack) agregarCarrito(currentPack.nombre);
-}
-function mostrarCarrito(){
-  const div=document.getElementById("cart-items");
-  div.innerHTML="";
-  cart.forEach((p,i)=>{
-    const item=document.createElement("div");
-    item.className="cart-item";
-    item.innerHTML=`${p.nombre} - ${p.precio} € <button onclick="comprarPack('${p.nombre}')">Comprar</button> <button onclick="eliminar(${i})">Eliminar</button>`;
-    div.appendChild(item);
-  });
-  document.getElementById("cart").style.display=cart.length>0?"block":"none";
-  document.getElementById("cartCount").innerText=`(${cart.length})`;
-}
-function eliminar(i){cart.splice(i,1); mostrarCarrito();}
-
-/* 🔹 Comprar */
-function comprarPack(nombre){alert("Pronto se podrán pagar los packs por Payhip! ("+nombre+")");}
-function comprarPackModal(){if(currentPack) comprarPack(currentPack.nombre);}
-
-/* 🔹 Admin */
-function loginAdmin(){
-  const pass=document.getElementById("adminPass").value;
-  if(pass===PASSWORD){
-    document.getElementById("adminPanel").style.display="block";
-    document.getElementById("adminData").value=JSON.stringify(packs,null,2);
-  }else{alert("Contraseña incorrecta");}
-}
-function guardarCambios(){
-  packs=JSON.parse(document.getElementById("adminData").value);
-  localStorage.setItem("packsRivelo",JSON.stringify(packs));
-  mostrarCatalogo();
-  alert("Cambios guardados!");
-}
-function subirPrecio(){
-  packs.forEach(p=>p.precio=Math.round(p.precio+1*100)/100);
-  document.getElementById("adminData").value=JSON.stringify(packs,null,2);
-}
-function bajarPrecio(){
-  packs.forEach(p=>p.precio=Math.max(0,Math.round(p.precio-1*100)/100));
-  document.getElementById("adminData").value=JSON.stringify(packs,null,2);
+/* --- MODAL --- */
+function abrirModal(i){
+  let p = packs[i];
+  let modalData = document.getElementById('modalData');
+  modalData.innerHTML = `
+    <h2>${p.nombre}</h2>
+    <img src="${p.img}" style="width:100%;border-radius:10px;margin-bottom:20px;">
+    <p>No solo recibes el proveedor, también recibirás:</p>
+    <ul>
+      <li>CONTACTOS AL INSTANTE</li>
+      <li>SEGURO ANTIFALLOS</li>
+      <li>GUIA PARA DESCUENTOS EXCLUSIVOS</li>
+      <li>PASO A PASO DE 0 a 5 K AL MES</li>
+      <li>SOPORTE 24/7 CON EL EQUIPO PRIVADO</li>
+      <li>MEJOR RELACIÓN CALIDAD-PRECIO</li>
+    </ul>
+    <div class="actions">
+      <button class="cart" onclick="agregarCarrito(${i});closeModal()">Agregar al carrito</button>
+      <button class="buy" onclick="alert('Pronto podrás pagar con tarjeta');">Comprar con Payhip</button>
+    </div>
+    <h3>Preguntas frecuentes</h3>
+    <p><strong>¿Cómo recibo los contactos?</strong> Los recibes al instante al correo que indiques al pagar.</p>
+    <p><strong>¿Qué es un proveedor privado?</strong> Contactos de proveedores reales para obtener productos a precios bajos.</p>
+    <p><strong>¿Sois fiables?</strong> Más de 3 años en el sector. Instagram: @riveloms</p>
+  `;
+  document.getElementById('modal').style.display="flex";
 }
 
-/* 🔹 Buscador */
-document.getElementById("search").addEventListener("input",e=>{
-  mostrarCatalogo(e.target.value);
-});
+function closeModal(){document.getElementById('modal').style.display="none";}
+
+/* --- CARRITO --- */
+function agregarCarrito(i){
+  cart.push(packs[i]);
+  document.getElementById('cart-counter').innerText=cart.length;
+  alert(`${packs[i].nombre} agregado al carrito`);
+}
+
+mostrarPacks();
 </script>
-
 </body>
 </html>
