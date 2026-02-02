@@ -3,189 +3,338 @@
 <head>
 <meta charset="UTF-8">
 <title>Rivelo Proveedores</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* RESET Y FUENTES */
-body,html{margin:0;padding:0;font-family:Arial,sans-serif;background:#0f2027;color:#fff;overflow-x:hidden;}
-a{text-decoration:none;color:#25D366;}
-header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:#000;position:sticky;top:0;z-index:1000;}
-header h1{font-size:28px;letter-spacing:2px;}
-nav a{margin:0 15px;font-weight:bold;cursor:pointer;}
-.container{max-width:1200px;margin:auto;padding:20px;}
-.welcome{background:#ffffff;color:#000;padding:25px;border-radius:12px;text-align:center;margin:20px 0;animation:fadeIn 1s ease-in-out;}
-.card{background:#fff;color:#000;border-radius:12px;padding:15px;margin:15px;box-shadow:0 8px 20px rgba(0,0,0,0.3);transition:0.3s;flex:1 1 45%;}
-.card:hover{transform:scale(1.03);}
-.card img{max-width:100%;border-radius:8px;margin-bottom:10px;}
-.price{font-weight:bold;margin:8px 0;}
-button{padding:10px 15px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;background:#000;color:#fff;transition:0.2s;}
-button:hover{background:#25D366;}
-.vip{border:3px solid gold;}
-#adminPanel{display:none;background:#fff;color:#000;padding:20px;border-radius:12px;margin-bottom:30px;}
-input,textarea,select{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #ccc;}
-#packsContainer{display:flex;flex-wrap:wrap;justify-content:space-between;}
-#cart{position:fixed;top:80px;right:20px;background:#fff;color:#000;padding:10px;border-radius:12px;max-width:250px;z-index:1001;}
-#cart h3{margin-top:0;}
-.cart-item{border-bottom:1px solid #ccc;margin-bottom:5px;padding-bottom:5px;}
-#searchBar{margin:15px 0;padding:10px;width:100%;border-radius:6px;border:1px solid #ccc;}
-footer{text-align:center;padding:20px;margin-top:30px;background:#111;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+/* 🔹 Estilo general */
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#000;
+  color:#fff;
+  overflow-x:hidden;
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px;
+  font-size:28px;
+  letter-spacing:2px;
+  background:#111;
+  position:fixed;
+  width:100%;
+  z-index:1000;
+}
+.menu-icon{
+  font-size:28px;
+  cursor:pointer;
+}
+nav{
+  display:none;
+  position:absolute;
+  top:70px;
+  left:0;
+  background:#111;
+  width:100%;
+  flex-direction:column;
+  padding:20px;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:10px 0;
+  font-size:18px;
+}
+nav a:hover{
+  color:#25D366;
+}
+.search-bar{
+  display:flex;
+  align-items:center;
+  border:1px solid #fff;
+  border-radius:6px;
+  padding:5px;
+}
+.search-bar input{
+  border:none;
+  outline:none;
+  background:none;
+  color:#fff;
+  width:120px;
+}
+.search-bar i{
+  margin-left:5px;
+  color:#fff;
+}
+
+/* 🔹 Contenedor principal */
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:120px 20px 60px 20px;
+}
+
+/* 🔹 Bienvenida */
+.welcome{
+  text-align:center;
+  font-size:28px;
+  margin-bottom:40px;
+  animation:fadeIn 1s ease-in-out;
+}
+
+/* 🔹 Tarjetas */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+.card{
+  background:#111;
+  border:2px solid #fff;
+  border-radius:12px;
+  padding:15px;
+  text-align:center;
+  transition:0.3s;
+  cursor:pointer;
+}
+.card:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px #25D366;
+}
+.card img{
+  max-width:100px;
+  margin-bottom:10px;
+}
+
+/* 🔹 Pack VIP */
+.vip{
+  border:3px solid gold;
+  box-shadow:0 0 20px gold;
+  transform:scale(1.05);
+}
+
+/* 🔹 Botones */
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  margin:5px;
+}
+.buy-btn{
+  background:#25D366;
+  color:#000;
+}
+.cart-btn{
+  background:#fff;
+  color:#000;
+}
+
+/* 🔹 Carrito */
+#cart{
+  display:none;
+  background:#111;
+  padding:20px;
+  border-radius:12px;
+  margin-top:30px;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #fff;
+  padding:10px 0;
+}
+
+/* 🔹 Admin */
+#adminPanel{
+  display:none;
+  background:#111;
+  padding:20px;
+  border-radius:12px;
+  margin:30px 0;
+}
+#adminPanel textarea{
+  width:100%;
+  height:150px;
+  background:#000;
+  color:#fff;
+  border:1px solid #fff;
+  border-radius:8px;
+  padding:10px;
+}
+
+/* 🔹 Footer */
+footer{
+  background:#111;
+  padding:30px 20px;
+  text-align:center;
+  margin-top:50px;
+  border-top:2px solid #fff;
+}
+footer a{
+  margin:0 10px;
+  color:#fff;
+  font-size:24px;
+}
+footer a:hover{color:#25D366;}
+
+/* 🔹 Animaciones */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
 </style>
 </head>
 <body>
 
 <header>
-<h1>RIVEL0</h1>
-<nav>
-<a onclick="mostrarInicio()">Inicio</a>
-<a onclick="mostrarCatalogo()">Catálogo</a>
-<a onclick="mostrarCart()">Carrito</a>
-</nav>
+  <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Buscar...">
+    <i class="fas fa-search"></i>
+  </div>
 </header>
 
-<div class="container">
+<nav id="menu">
+  <a href="#inicio" onclick="toggleMenu()">Inicio</a>
+  <a href="#catalogo" onclick="toggleMenu()">Catálogo</a>
+  <a href="#cart" onclick="toggleMenu()">Carrito</a>
+  <a href="#admin" onclick="toggleMenu()">Administrador</a>
+</nav>
 
-<div id="inicio">
-  <div class="welcome">
+<div class="container">
+  <div id="inicio" class="welcome">
     Bienvenido a Rivelo, la fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
+  </div>
+
+  <!-- Catálogo -->
+  <div id="catalogo" class="cards"></div>
+
+  <!-- Carrito -->
+  <div id="cart">
+    <h3>Carrito</h3>
+    <div id="cart-items"></div>
+    <button onclick="alert('Pronto se podrán pagar los packs por Payhip!')">Comprar todo</button>
+  </div>
+
+  <!-- Admin -->
+  <div id="admin" style="margin-top:40px">
+    <input type="password" id="adminPass" placeholder="Contraseña administrador">
+    <button onclick="loginAdmin()">Entrar</button>
+
+    <div id="adminPanel">
+      <h3>Editar Packs</h3>
+      <textarea id="adminData"></textarea>
+      <button onclick="guardarCambios()">Guardar cambios</button>
+    </div>
   </div>
 </div>
 
-<div id="catalogo" style="display:none;">
-  <input type="text" id="searchBar" placeholder="Buscar producto..." oninput="filtrar()">
-  <div id="packsContainer"></div>
-</div>
-
-<!-- 🔐 LOGIN ADMIN -->
-<div id="adminLogin">
-  <input type="password" id="pass" placeholder="Contraseña administrador">
-  <button onclick="login()">Entrar al panel</button>
-</div>
-
-<!-- 🛠 PANEL ADMIN -->
-<div id="adminPanel">
-  <h3>Editar Packs</h3>
-  <textarea id="dataEdit" rows="10"></textarea>
-  <p>O subir logo desde tu dispositivo:</p>
-  <input type="file" id="logoFile" accept="image/*">
-  <select id="selectPackLogo"></select>
-  <button onclick="guardarLogo()">Subir logo</button>
-  <button onclick="guardarCambios()">Guardar cambios</button>
-</div>
-
-<!-- CARRITO -->
-<div id="cart" style="display:none;">
-<h3>Carrito</h3>
-<div id="cartItems"></div>
-<button onclick="vaciarCarrito()">Vaciar Carrito</button>
-</div>
-
-</div>
-
 <footer>
-Síguenos en Instagram: <a href="https://instagram.com/riveloms" target="_blank">@riveloms</a> | TikTok: <a href="https://tiktok.com/@rivelo_ms" target="_blank">@rivelo_ms</a>
+  <a href="https://instagram.com/riveloms" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://tiktok.com/@rivelo_ms" target="_blank"><i class="fab fa-tiktok"></i></a>
+  <p>
+    • PAGOS SEGUROS: Cumplimos la legalidad estatal.<br>
+    • PROVEEDORES PREMIUM: Los mejores calidad-precio.<br>
+    • TOP 1 DEL SECTOR: Nuevos proveedores y facturas actualizadas.<br>
+    • TRANSPARENCIA: Respuestas rápidas y asistencia máxima.
+  </p>
 </footer>
 
 <script>
-// CONTRASEÑA ADMIN
+/* 🔹 Datos iniciales */
 const PASSWORD="Rivelo#9274_PROveedores!";
-
-// PACKS
-let packs = JSON.parse(localStorage.getItem("riveloPacks")) || [
-  {cat:"🇪🇸 Español",nombre:"Perfumes Español",precio:"19,99€",numeros:"+34 600 43 85 76",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Perfumes 1 y 2",precio:"19,99€",numeros:"+86 187 2951 4095 / +86 188 2367 5993",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Relojes y G-Shock",precio:"15,99€",numeros:"+852 5580 5301 / +86 157 6690 3977",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Tecnología / iPhone / AirPods",precio:"30€",numeros:"+86 183 0385 0813 / +86 185 1194 9009 ...",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Zapatillas",precio:"15,99€",numeros:"+86 195 7767 7246 / ...",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Ropa",precio:"15,99€",numeros:"+86 157 6835 9931 / ...",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Fútbol",precio:"19,99€",numeros:"+86 177 2083 5685 / ...",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Lujo / LV",precio:"25€",numeros:"+86 178 9101 7227 / +86 159 8010 0656",logo:""},
-  {cat:"🇨🇳 Chinos",nombre:"Vapers",precio:"15,20€",numeros:"+86 138 7003 0606",logo:""},
-  {cat:"⭐ VIP",nombre:"Todos los proveedores",precio:"150€",numeros:"Todos los números",logo:""}
+let packs = [
+{nombre:"Pack Vapers",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/3yZfhjB/vaper.png"},
+{nombre:"Pack Pulseras LV",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/4fz2Qkp/lv.png"},
+{nombre:"Pack Accesorios de lujo",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/H2T1kV5/luxury.png"},
+{nombre:"Pack Botas de fútbol",categoria:"Chinos",precio:30,img:"https://i.ibb.co/0GQF7Wx/football.png"},
+{nombre:"Pack Zapatillas",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/4pj0kFH/sneakers.png"},
+{nombre:"Pack Tecnología",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/6Jkq6Fq/tech.png"},
+{nombre:"Pack iPhones 1:1 y AirPods",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/vx6tYQp/iphone.png"},
+{nombre:"Pack Relojes",categoria:"Chinos",precio:25,img:"https://i.ibb.co/1n4Sx2R/watches.png"},
+{nombre:"Pack Perfumes",categoria:"Chinos",precio:15.20,img:"https://i.ibb.co/4R7jWc3/perfume.png"},
+{nombre:"Pack Perfumes Español",categoria:"Español",precio:19.99,img:"https://i.ibb.co/7tXH4mF/perfume-spain.png"},
+{nombre:"Pack Tecnología y perfumes",categoria:"Chinos",precio:150,img:"https://i.ibb.co/1vQGz4K/vip.png",vip:true}
 ];
 
 let cart=[];
 
-// MENÚ
-function mostrarInicio(){document.getElementById("inicio").style.display="block"; document.getElementById("catalogo").style.display="none";}
-function mostrarCatalogo(){document.getElementById("inicio").style.display="none"; document.getElementById("catalogo").style.display="flex"; mostrar();}
-function mostrarCart(){document.getElementById("cart").style.display="block";}
-
-// MOSTRAR PACKS
-function mostrar(){
-  const container=document.getElementById("packsContainer");
-  container.innerHTML="";
-  packs.forEach((p,i)=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.style.flex="1 1 45%";
-    card.innerHTML=`${p.logo?`<img src="${p.logo}">`:''}<h3>${p.cat} - ${p.nombre}</h3><p class="price">Precio: ${p.precio}</p><button onclick="agregarCarrito(${i})">Agregar al carrito</button>`;
-    container.appendChild(card);
-  });
+/* 🔹 Funciones menú */
+function toggleMenu(){
+  const menu=document.getElementById("menu");
+  menu.style.display=menu.style.display==="flex"?"none":"flex";
 }
 
-// FILTRAR
-function filtrar(){
-  const valor=document.getElementById("searchBar").value.toLowerCase();
-  const filtered=packs.filter(p=>p.nombre.toLowerCase().includes(valor)||p.cat.toLowerCase().includes(valor));
-  const container=document.getElementById("packsContainer");
-  container.innerHTML="";
-  filtered.forEach((p,i)=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.style.flex="1 1 45%";
-    card.innerHTML=`${p.logo?`<img src="${p.logo}">`:''}<h3>${p.cat} - ${p.nombre}</h3><p class="price">Precio: ${p.precio}</p><button onclick="agregarCarrito(${i})">Agregar al carrito</button>`;
-    container.appendChild(card);
-  });
-}
-
-// CARRITO
-function agregarCarrito(i){cart.push(packs[i]); actualizarCarrito();}
-function actualizarCarrito(){
-  const div=document.getElementById("cartItems");
+/* 🔹 Mostrar catálogo */
+function mostrarCatalogo(filter=""){
+  const div=document.getElementById("catalogo");
   div.innerHTML="";
-  cart.forEach((item,index)=>{div.innerHTML+=`<div class="cart-item">${item.nombre} - ${item.precio} <button onclick="eliminarDelCarrito(${index})">X</button></div>`;});
+  packs.filter(p=>p.nombre.toLowerCase().includes(filter.toLowerCase()))
+       .forEach(p=>{
+    const card=document.createElement("div");
+    card.className="card"+(p.vip?" vip":"");
+    card.innerHTML=`
+      <img src="${p.img}" alt="${p.nombre}">
+      <h3>${p.nombre}</h3>
+      <p>Precio: ${p.precio} €</p>
+      <button class="buy-btn" onclick="comprarPack('${p.nombre}')">Comprar</button>
+      <button class="cart-btn" onclick="agregarCarrito('${p.nombre}')">Agregar al carrito</button>
+    `;
+    div.appendChild(card);
+  });
 }
-function eliminarDelCarrito(i){cart.splice(i,1); actualizarCarrito();}
-function vaciarCarrito(){cart=[]; actualizarCarrito();}
+mostrarCatalogo();
 
-// ADMIN
-const selectPackLogo=document.getElementById("selectPackLogo");
-function actualizarSelect(){
-  selectPackLogo.innerHTML='<option value="">Selecciona pack</option>';
-  packs.forEach((p,i)=>{selectPackLogo.innerHTML+=`<option value="${i}">${p.nombre}</option>`;});
+/* 🔹 Carrito */
+function agregarCarrito(nombre){
+  const p=packs.find(x=>x.nombre===nombre);
+  cart.push(p);
+  mostrarCarrito();
 }
-actualizarSelect();
+function mostrarCarrito(){
+  const div=document.getElementById("cart-items");
+  div.innerHTML="";
+  cart.forEach((p,i)=>{
+    const item=document.createElement("div");
+    item.className="cart-item";
+    item.innerHTML=`${p.nombre} - ${p.precio} € <button onclick="comprarPack('${p.nombre}')">Comprar</button> <button onclick="eliminar(${i})">Eliminar</button>`;
+    div.appendChild(item);
+  });
+  document.getElementById("cart").style.display=cart.length>0?"block":"none";
+}
+function eliminar(i){
+  cart.splice(i,1);
+  mostrarCarrito();
+}
 
-function login(){
-  if(document.getElementById("pass").value===PASSWORD){
+/* 🔹 Comprar */
+function comprarPack(nombre){
+  alert("Pronto se podrán pagar los packs por Payhip! ("+nombre+")");
+}
+
+/* 🔹 Admin */
+function loginAdmin(){
+  const pass=document.getElementById("adminPass").value;
+  if(pass===PASSWORD){
     document.getElementById("adminPanel").style.display="block";
-    document.getElementById("dataEdit").value=JSON.stringify(packs,null,2);
-    alert("Bienvenido Rivelo 😎");
+    document.getElementById("adminData").value=JSON.stringify(packs,null,2);
   }else{alert("Contraseña incorrecta");}
 }
-
 function guardarCambios(){
-  packs=JSON.parse(document.getElementById("dataEdit").value);
-  localStorage.setItem("riveloPacks",JSON.stringify(packs));
-  mostrar();
-  actualizarSelect();
-  alert("Cambios guardados");
+  packs=JSON.parse(document.getElementById("adminData").value);
+  localStorage.setItem("packsRivelo",JSON.stringify(packs));
+  mostrarCatalogo();
+  alert("Cambios guardados!");
 }
 
-function guardarLogo(){
-  const file=document.getElementById("logoFile").files[0];
-  const index=selectPackLogo.value;
-  if(!file || index===""){alert("Selecciona un pack y un archivo"); return;}
-  const reader=new FileReader();
-  reader.onload=function(e){
-    packs[index].logo=e.target.result;
-    localStorage.setItem("riveloPacks",JSON.stringify(packs));
-    mostrar();
-    alert("Logo actualizado!");
-  }
-  reader.readAsDataURL(file);
-}
-
-mostrar();
+/* 🔹 Buscador */
+document.getElementById("search").addEventListener("input",e=>{
+  mostrarCatalogo(e.target.value);
+});
 </script>
+
 </body>
 </html>
