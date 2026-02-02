@@ -7,33 +7,72 @@
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
   color:#fff;
+  overflow-x:hidden;
 }
 header{
   text-align:center;
-  padding:30px;
-  font-size:36px;
+  padding:25px;
+  font-size:34px;
   font-weight:bold;
   letter-spacing:3px;
   background:#000;
 }
+header img{
+  display:block;
+  margin:0 auto 15px auto;
+  max-width:250px;
+}
 .container{
-  max-width:1200px;
+  max-width:1100px;
   margin:auto;
   padding:20px;
 }
 .welcome{
   background:#ffffff;
   color:#000;
-  padding:25px;
-  border-radius:15px;
+  padding:20px;
+  border-radius:12px;
   text-align:center;
-  margin-bottom:30px;
+  margin-bottom:25px;
   animation:fadeIn 1s ease-in-out;
-  font-size:18px;
-  font-weight:bold;
 }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+}
+.card{
+  background:#fff;
+  color:#000;
+  border-radius:12px;
+  padding:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.card:hover{transform:scale(1.03);}
+.card img{
+  max-width:100px;
+  margin-bottom:10px;
+}
+.price{font-weight:bold;margin:8px 0;}
+button{
+  padding:15px 20px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  background:#25D366;
+  color:#fff;
+  font-size:16px;
+  margin-top:10px;
+  width:100%;
+}
+.vip{border:3px solid gold;}
 #adminLogin{
   text-align:center;
   margin:20px 0;
@@ -42,78 +81,29 @@ header{
   display:none;
   background:#fff;
   color:#000;
-  padding:25px;
-  border-radius:15px;
+  padding:20px;
+  border-radius:12px;
   margin-bottom:30px;
 }
-input, textarea{
+input,textarea{
   width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:16px;
-}
-button{
-  padding:15px 25px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:bold;
-  font-size:18px;
-  transition:0.3s;
-}
-button:hover{
-  transform:scale(1.05);
-}
-#contenido{
-  display:grid;
-  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
-  gap:20px;
-}
-.card{
-  background:#111;
-  color:#fff;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-  text-align:center;
-  transition:0.3s;
-}
-.card:hover{
-  transform:scale(1.05);
-  box-shadow:0 15px 30px rgba(0,0,0,0.4);
-}
-.card img{
-  max-width:100px;
-  margin-bottom:15px;
-}
-h2{
-  margin-bottom:10px;
-  color:#25D366;
-}
-p{
+  padding:8px;
   margin:6px 0;
-  font-size:16px;
-}
-.price{
-  font-weight:bold;
-  margin:10px 0;
-  font-size:18px;
-  color:#fff;
-}
-.vip{
-  border:4px solid gold;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 @keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
 }
 </style>
 </head>
 <body>
 
-<header>RIVELO</header>
+<header>
+  <img src="https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-proveedores.png" alt="Rivelo Proveedores">
+  RIVELO
+</header>
 
 <div class="container">
 
@@ -135,27 +125,26 @@ Bienvenido a Rivelo, la fuente privada de proveedores reales. Compra tu pack y r
 </div>
 
 <!-- 📦 SECCIONES -->
-<div id="contenido"></div>
+<div class="grid" id="contenido"></div>
 
 </div>
 
 <script>
 const PASSWORD="Rivelo#9274_PROveedores!";
 
-// Datos de proveedores con logos
+// Datos editables
 let packs = JSON.parse(localStorage.getItem("riveloPacks")) || [
-{cat:"Chinos", nombre:"VAPERS", precio:"15,20€", numeros:"+86 138 7003 0606", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Pulseras LV", precio:"15,20€", numeros:"+86 159 8010 0656", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Accesorios de lujo", precio:"25€", numeros:"+86 178 9101 7227", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Botas de fútbol", precio:"19,99€", numeros:"+86 177 2083 5685, +86 135 3538 6151, +86 183 1215 9936, +86 157 6835 9931, +86 151 6048 4398, +86 153 0597 2112, +86 193 5944 0554, +86 181 5975 3025, +86 136 1601 7756, +86 130 5569 1894, +86 132 0594 3370", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Zapatillas", precio:"15,99€", numeros:"+86 195 7767 7246, +86 133 3845 1248, +86 131 6486 5952, +86 158 9208 5764, +86 153 0609 8139, +86 159 8034 8547, +86 137 9908 8613", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Tecnología", precio:"30€", numeros:"+86 183 0385 0813, +86 158 1870 9179, +86 180 3810 0841, +86 158 1865 0060, +86 186 8836 1378", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"iPhones 1:1 y AirPods", precio:"30€", numeros:"+86 185 1194 9009", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Relojes", precio:"15,99€", numeros:"+852 5580 5301, +86 157 6690 3977", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Perfumes", precio:"19,99€", numeros:"+86 187 2951 4095, +86 188 2367 5993", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Español", nombre:"PERFUMES ESPAÑOL", precio:"19,99€", numeros:"+34 600 43 85 76", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"Chinos", nombre:"Tecnología y perfumes", precio:"19,99€", numeros:"+86 183 0385 0813", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
-{cat:"VIP", nombre:"Todos los proveedores", precio:"150€", numeros:"Todos los números", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"}
+  {cat:"🇨🇳 Chinos",nombre:"VAPERS",precio:"15,20€",numeros:"+86 138 7003 0606",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-vapers.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Pulseras LV",precio:"25€",numeros:"+86 159 8010 0656",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-pulseras.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Accesorios de lujo",precio:"25€",numeros:"+86 178 9101 7227",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-lujo.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Botas de fútbol",precio:"19,99€",numeros:"+86 177 2083 5685, +86 135 3538 6151, +86 183 1215 9936, +86 157 6835 9931, +86 151 6048 4398, +86 153 0597 2112, +86 193 5944 0554, +86 181 5975 3025, +86 136 1601 7756, +86 130 5569 1894, +86 132 0594 3370",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-futbol.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Zapatillas",precio:"15,99€",numeros:"+86 195 7767 7246, +86 133 3845 1248, +86 131 6486 5952, +86 158 9208 5764, +86 153 0609 8139, +86 159 8034 8547, +86 137 9908 8613",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-zapatillas.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Tecnología",precio:"30€",numeros:"+86 183 0385 0813, +86 158 1870 9179, +86 180 3810 0841, +86 158 1865 0060, +86 186 8836 1378",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-tecnologia.png"},
+  {cat:"🇨🇳 Chinos",nombre:"iPhones 1:1 y AirPods",precio:"30€",numeros:"+86 185 1194 9009",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-iphone.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Relojes",precio:"15,99€",numeros:"+852 5580 5301, +86 157 6690 3977",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-relojes.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Perfumes",precio:"19,99€",numeros:"+86 187 2951 4095, +86 188 2367 5993",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-perfumes.png"},
+  {cat:"🇪🇸 Español",nombre:"Perfumes Español",precio:"19,99€",numeros:"+34 600 43 85 76",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-perfumes-es.png"},
+  {cat:"🇨🇳 Chinos",nombre:"Tecnología y perfumes",precio:"30€",numeros:"+86 183 0385 0813",logo:"https://raw.githubusercontent.com/tu-usuario/mi-reventa/main/logo-tec-perfumes.png"}
 ];
 
 function mostrar(){
@@ -164,10 +153,9 @@ function mostrar(){
   packs.forEach(p=>{
     div.innerHTML+=`
       <div class="card ${p.cat.includes('VIP')?'vip':''}">
-        <img src="${p.logo}" alt="${p.nombre} logo">
-        <h2>${p.cat} - ${p.nombre}</h2>
+        <img src="${p.logo}" alt="${p.nombre}">
+        <h3>${p.cat} - ${p.nombre}</h3>
         <p class="price">Precio: ${p.precio}</p>
-        <p>${p.numeros}</p>
         <button onclick="comprar('${p.nombre}')">Comprar</button>
       </div>
     `;
