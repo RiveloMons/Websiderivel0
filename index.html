@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Rivelo Proveedores</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rivelo Mons - Packs de Proveedores</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 /* 🔹 Estilo general */
@@ -46,7 +47,7 @@ nav a{
   font-size:18px;
 }
 nav a:hover{
-  color:#25D366;
+  color:#FFD700;
 }
 .search-bar{
   display:flex;
@@ -71,42 +72,48 @@ nav a:hover{
 .container{
   max-width:1200px;
   margin:auto;
-  padding:120px 20px 60px 20px;
+  padding:140px 20px 60px 20px;
 }
 
 /* 🔹 Bienvenida */
-.welcome{
+#welcome{
   text-align:center;
-  font-size:28px;
-  margin-bottom:40px;
+  font-size:36px;
+  margin-bottom:60px;
   animation:fadeIn 1s ease-in-out;
+}
+#welcome img{
+  max-width:150px;
+  display:block;
+  margin:0 auto 20px auto;
+  border:2px solid #fff;
+  border-radius:12px;
+  padding:5px;
 }
 
 /* 🔹 Tarjetas */
 .cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:20px;
 }
 .card{
   background:#111;
   border:2px solid #fff;
   border-radius:12px;
-  padding:15px;
+  padding:20px;
   text-align:center;
-  transition:0.3s;
+  transition:0.4s;
   cursor:pointer;
 }
 .card:hover{
   transform:scale(1.05);
-  box-shadow:0 0 20px #25D366;
+  box-shadow:0 0 20px #FFD700;
 }
 .card img{
   max-width:100px;
   margin-bottom:10px;
 }
-
-/* 🔹 Pack VIP */
 .vip{
   border:3px solid gold;
   box-shadow:0 0 20px gold;
@@ -123,7 +130,7 @@ button{
   margin:5px;
 }
 .buy-btn{
-  background:#25D366;
+  background:#FFD700;
   color:#000;
 }
 .cart-btn{
@@ -147,6 +154,28 @@ button{
   padding:10px 0;
 }
 
+/* 🔹 Ficha pack ampliada */
+#packModal{
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  color:#fff;
+  overflow:auto;
+  z-index:2000;
+  padding:50px 20px;
+}
+#packModal .content{
+  max-width:700px;
+  margin:auto;
+  text-align:center;
+}
+#packModal img{max-width:150px;margin-bottom:20px;}
+#packModal h2{color:#FFD700;}
+#packModal p{margin:10px 0;}
+
 /* 🔹 Admin */
 #adminPanel{
   display:none;
@@ -164,6 +193,11 @@ button{
   border-radius:8px;
   padding:10px;
 }
+.admin-controls button{
+  background:#FFD700;
+  color:#000;
+  margin:3px;
+}
 
 /* 🔹 Footer */
 footer{
@@ -178,12 +212,18 @@ footer a{
   color:#fff;
   font-size:24px;
 }
-footer a:hover{color:#25D366;}
+footer a:hover{color:#FFD700;}
 
 /* 🔹 Animaciones */
 @keyframes fadeIn{
   from{opacity:0;transform:translateY(20px);}
   to{opacity:1;transform:translateY(0);}
+}
+
+/* 🔹 Responsive */
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr;}
+  .search-bar input{width:80px;}
 }
 </style>
 </head>
@@ -198,15 +238,16 @@ footer a:hover{color:#25D366;}
 </header>
 
 <nav id="menu">
-  <a href="#inicio" onclick="toggleMenu()">Inicio</a>
+  <a href="#welcome" onclick="toggleMenu()">Inicio</a>
   <a href="#catalogo" onclick="toggleMenu()">Catálogo</a>
-  <a href="#cart" onclick="toggleMenu()">Carrito</a>
-  <a href="#admin" onclick="toggleMenu()">Administrador</a>
+  <a href="#cart" onclick="toggleMenu()">Carrito <span id="cartCount">(0)</span></a>
+  <a href="#adminSection" onclick="toggleMenu()">Administrador</a>
 </nav>
 
 <div class="container">
-  <div id="inicio" class="welcome">
-    Bienvenido a Rivelo, la fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
+  <div id="welcome">
+    <img src="https://i.ibb.co/7X9ZhHZ/logo-black-white.png" alt="Rivelo Mons Logo">
+    Bienvenido a Rivelo Mons, la fuente privada de proveedores reales. Compra tu pack y recibe los contactos automáticamente en tu correo.
   </div>
 
   <!-- Catálogo -->
@@ -220,15 +261,35 @@ footer a:hover{color:#25D366;}
   </div>
 
   <!-- Admin -->
-  <div id="admin" style="margin-top:40px">
+  <div id="adminSection" style="margin-top:40px">
     <input type="password" id="adminPass" placeholder="Contraseña administrador">
     <button onclick="loginAdmin()">Entrar</button>
 
     <div id="adminPanel">
       <h3>Editar Packs</h3>
       <textarea id="adminData"></textarea>
+      <div class="admin-controls">
+        <button onclick="subirPrecio()">+</button>
+        <button onclick="bajarPrecio()">-</button>
+      </div>
       <button onclick="guardarCambios()">Guardar cambios</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal pack -->
+<div id="packModal">
+  <div class="content" id="packContent">
+    <button onclick="cerrarModal()">Cerrar X</button>
+    <img id="modalImg">
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc">No solo recibes el proveedor, también recibirás:<br>CONTACTOS AL INSTANTE<br>SEGURO ANTIFALLOS<br>GUÍA PARA DESCUENTOS EXCLUSIVOS<br>PASO A PASO DE 0 a 5K AL MES<br>SOPORTE 24/7<br>MEJORES RELACIÓN CALIDAD-PRECIO</p>
+    <button class="cart-btn" onclick="agregarCarritoModal()">Agregar al carrito</button>
+    <button class="buy-btn" onclick="comprarPackModal()">Comprar con Payhip</button>
+    <h3>Preguntas frecuentes:</h3>
+    <p><strong>¿Cómo recibo los contactos?</strong> Al instante en tu Gmail.</p>
+    <p><strong>¿Qué es un proveedor privado y porqué es valioso?</strong> Contactos exclusivos a precios bajos, empresas certificadas.</p>
+    <p><strong>¿Sois fiables?</strong> +3 años en el sector, Instagram: @riveloms</p>
   </div>
 </div>
 
@@ -244,25 +305,25 @@ footer a:hover{color:#25D366;}
 </footer>
 
 <script>
-/* 🔹 Datos iniciales */
+/* 🔹 Datos */
 const PASSWORD="Rivelo#9274_PROveedores!";
 let packs = [
-{nombre:"Pack Vapers",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/3yZfhjB/vaper.png"},
-{nombre:"Pack Pulseras LV",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/4fz2Qkp/lv.png"},
-{nombre:"Pack Accesorios de lujo",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/H2T1kV5/luxury.png"},
-{nombre:"Pack Botas de fútbol",categoria:"Chinos",precio:30,img:"https://i.ibb.co/0GQF7Wx/football.png"},
-{nombre:"Pack Zapatillas",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/4pj0kFH/sneakers.png"},
-{nombre:"Pack Tecnología",categoria:"Chinos",precio:15.99,img:"https://i.ibb.co/6Jkq6Fq/tech.png"},
-{nombre:"Pack iPhones 1:1 y AirPods",categoria:"Chinos",precio:19.99,img:"https://i.ibb.co/vx6tYQp/iphone.png"},
-{nombre:"Pack Relojes",categoria:"Chinos",precio:25,img:"https://i.ibb.co/1n4Sx2R/watches.png"},
-{nombre:"Pack Perfumes",categoria:"Chinos",precio:15.20,img:"https://i.ibb.co/4R7jWc3/perfume.png"},
-{nombre:"Pack Perfumes Español",categoria:"Español",precio:19.99,img:"https://i.ibb.co/7tXH4mF/perfume-spain.png"},
-{nombre:"Pack Tecnología y perfumes",categoria:"Chinos",precio:150,img:"https://i.ibb.co/1vQGz4K/vip.png",vip:true}
+{nombre:"Proveedor Vapers",precio:19.99,img:"https://i.ibb.co/3yZfhjB/vaper.png"},
+{nombre:"Proveedor Pulseras LV",precio:19.99,img:"https://i.ibb.co/4fz2Qkp/lv.png"},
+{nombre:"Proveedor Accesorios de lujo",precio:15.99,img:"https://i.ibb.co/H2T1kV5/luxury.png"},
+{nombre:"Proveedor Botas de fútbol",precio:30,img:"https://i.ibb.co/0GQF7Wx/football.png"},
+{nombre:"Proveedor Zapatillas",precio:15.99,img:"https://i.ibb.co/4pj0kFH/sneakers.png"},
+{nombre:"Proveedor Tecnología",precio:15.99,img:"https://i.ibb.co/6Jkq6Fq/tech.png"},
+{nombre:"Proveedor iPhones 1:1 y AirPods",precio:19.99,img:"https://i.ibb.co/vx6tYQp/iphone.png"},
+{nombre:"Proveedor Relojes",precio:25,img:"https://i.ibb.co/1n4Sx2R/watches.png"},
+{nombre:"Proveedor Perfumes",precio:15.20,img:"https://i.ibb.co/4R7jWc3/perfume.png"},
+{nombre:"Pack VIP Todos los proveedores",precio:150,img:"https://i.ibb.co/1vQGz4K/vip.png",vip:true}
 ];
 
 let cart=[];
+let currentPack=null;
 
-/* 🔹 Funciones menú */
+/* 🔹 Menú */
 function toggleMenu(){
   const menu=document.getElementById("menu");
   menu.style.display=menu.style.display==="flex"?"none":"flex";
@@ -283,16 +344,31 @@ function mostrarCatalogo(filter=""){
       <button class="buy-btn" onclick="comprarPack('${p.nombre}')">Comprar</button>
       <button class="cart-btn" onclick="agregarCarrito('${p.nombre}')">Agregar al carrito</button>
     `;
+    card.onclick=()=>abrirModal(p.nombre);
     div.appendChild(card);
   });
 }
 mostrarCatalogo();
+
+/* 🔹 Modal */
+function abrirModal(nombre){
+  const p=packs.find(x=>x.nombre===nombre);
+  currentPack=p;
+  document.getElementById("modalImg").src=p.img;
+  document.getElementById("modalTitle").innerText=p.nombre;
+  document.getElementById("packModal").style.display="block";
+}
+function cerrarModal(){document.getElementById("packModal").style.display="none";}
 
 /* 🔹 Carrito */
 function agregarCarrito(nombre){
   const p=packs.find(x=>x.nombre===nombre);
   cart.push(p);
   mostrarCarrito();
+  alert("Producto agregado al carrito");
+}
+function agregarCarritoModal(){
+  if(currentPack) agregarCarrito(currentPack.nombre);
 }
 function mostrarCarrito(){
   const div=document.getElementById("cart-items");
@@ -304,16 +380,13 @@ function mostrarCarrito(){
     div.appendChild(item);
   });
   document.getElementById("cart").style.display=cart.length>0?"block":"none";
+  document.getElementById("cartCount").innerText=`(${cart.length})`;
 }
-function eliminar(i){
-  cart.splice(i,1);
-  mostrarCarrito();
-}
+function eliminar(i){cart.splice(i,1); mostrarCarrito();}
 
 /* 🔹 Comprar */
-function comprarPack(nombre){
-  alert("Pronto se podrán pagar los packs por Payhip! ("+nombre+")");
-}
+function comprarPack(nombre){alert("Pronto se podrán pagar los packs por Payhip! ("+nombre+")");}
+function comprarPackModal(){if(currentPack) comprarPack(currentPack.nombre);}
 
 /* 🔹 Admin */
 function loginAdmin(){
@@ -328,6 +401,14 @@ function guardarCambios(){
   localStorage.setItem("packsRivelo",JSON.stringify(packs));
   mostrarCatalogo();
   alert("Cambios guardados!");
+}
+function subirPrecio(){
+  packs.forEach(p=>p.precio=Math.round(p.precio+1*100)/100);
+  document.getElementById("adminData").value=JSON.stringify(packs,null,2);
+}
+function bajarPrecio(){
+  packs.forEach(p=>p.precio=Math.max(0,Math.round(p.precio-1*100)/100));
+  document.getElementById("adminData").value=JSON.stringify(packs,null,2);
 }
 
 /* 🔹 Buscador */
