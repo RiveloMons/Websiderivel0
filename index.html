@@ -7,11 +7,11 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-body{background:#000;color:#fff;overflow-x:hidden}
+body{background:#000;color:#fff}
 
 /* MENU */
 .menu{position:fixed;top:15px;left:15px;z-index:9999;cursor:pointer}
-.menu div{width:28px;height:3px;background:#fff;margin:6px 0}
+.menu div{width:30px;height:3px;background:#fff;margin:6px 0}
 
 .sidebar{
 position:fixed;left:-260px;top:0;width:250px;height:100%;
@@ -22,53 +22,46 @@ transition:.4s;z-index:9998
 .sidebar.active{left:0}
 
 /* SECCIONES */
-.section{display:none;padding:90px 20px;min-height:100vh}
+.section{display:none;padding:100px 20px;min-height:100vh}
 .activeSection{display:block}
 
-/* BIENVENIDA ANIMADA */
-.hero{
-text-align:center;padding-top:120px;
-animation:fade 2s ease-in-out infinite alternate
-}
-@keyframes fade{
-from{opacity:.4;transform:scale(.98)}
-to{opacity:1;transform:scale(1)}
-}
-.hero h1{font-size:44px;margin-bottom:20px}
-
-/* TOPBAR */
-.topbar{position:fixed;right:15px;top:15px;z-index:9999;display:flex;gap:15px}
-.cartCount{
-position:absolute;top:-8px;right:-10px;
-background:gold;color:#000;border-radius:50%;
-padding:2px 6px;font-size:12px
-}
+/* HERO */
+.hero{text-align:center;padding-top:120px;animation:fade 2s ease-in-out infinite alternate}
+@keyframes fade{from{opacity:.5}to{opacity:1}}
+.hero h1{font-size:42px}
 
 /* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:18px;margin-top:40px
-}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;margin-top:40px}
 .card{
 border:2px solid #fff;padding:15px;text-align:center;
-transition:.3s;border-radius:8px;background:#111
+border-radius:8px;background:#111;transition:.3s
 }
-.card:hover{transform:scale(1.05);border-color:gold}
-.card img{width:100%;height:120px;object-fit:cover;margin-bottom:10px;border-radius:6px}
+.card:hover{border-color:gold;transform:scale(1.05)}
+.card img{width:100%;height:120px;object-fit:contain;background:#fff;border-radius:6px}
 .card button{
-margin-top:8px;padding:8px;border:none;
-background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%
+margin-top:10px;padding:12px;border:none;
+background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:15px
 }
 
 /* DETALLE */
-.packDetail{max-width:800px;margin:auto;text-align:center;line-height:1.6}
-.packDetail img{width:220px;border-radius:10px;margin:15px 0}
-.packDetail h2{font-size:30px;margin-bottom:10px}
+.packDetail{text-align:center;max-width:800px;margin:auto}
+.packDetail img{width:220px;background:#fff;border-radius:10px;margin:20px 0}
+.bigBtn{
+padding:16px;margin:12px 0;width:100%;
+font-size:18px;font-weight:bold;border:none;
+background:gold;color:#000;cursor:pointer
+}
 
-/* FOOTER */
-.footer{padding:40px 20px;text-align:center;border-top:2px solid #fff;margin-top:60px}
-.footer img{width:30px;margin:10px}
+/* CARRITO */
+.cartItem{
+border:1px solid #fff;margin:12px 0;padding:12px;border-radius:6px
+}
+.cartItem button{
+margin-top:8px;padding:10px;border:none;
+background:gold;color:#000;font-weight:bold;width:48%
+}
+.flex{display:flex;justify-content:space-between;gap:10px}
+
 </style>
 </head>
 <body>
@@ -81,21 +74,17 @@ background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%
 <a onclick="go('carrito')">Carrito</a>
 </div>
 
-<div class="topbar">
-🛒 <span class="cartCount" id="cartCount">0</span>
-</div>
-
 <!-- INICIO -->
 <div id="inicio" class="section activeSection">
 <div class="hero">
 <h1>Bienvenido a Rivelo Mons</h1>
-<p>Los mejores proveedores privados calidad-precio del mercado</p>
+<p>Proveedores privados calidad-precio verificados</p>
 </div>
 </div>
 
 <!-- CATALOGO -->
 <div id="catalogo" class="section">
-<h2>Catálogo de Packs</h2>
+<h2>Catálogo</h2>
 <div class="grid" id="packsGrid"></div>
 </div>
 
@@ -110,22 +99,18 @@ background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%
 <div id="cartItems"></div>
 </div>
 
-<div class="footer">
-<p>PAGOS SEGUROS · PROVEEDORES PREMIUM · TOP 1 · TRANSPARENCIA</p>
-</div>
-
 <script>
 let packs=[
-{name:"Proveedor de Vapers",price:19,img:"https://images.unsplash.com/photo-1580910051074-3eb694886505"},
-{name:"Proveedor Pulseras LV",price:19,img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a"},
-{name:"Proveedor Accesorios lujo",price:20,img:"https://images.unsplash.com/photo-1606760227091-3dd870d97f1d"},
-{name:"Proveedor Botas fútbol",price:25,img:"https://images.unsplash.com/photo-1522778034537-20a2486be803"},
-{name:"Proveedor Zapatillas",price:22,img:"https://images.unsplash.com/photo-1519741497674-611481863552"},
-{name:"Proveedor Tecnología",price:30,img:"https://images.unsplash.com/photo-1518770660439-4636190af475"},
-{name:"Proveedor iPhone/AirPods",price:30,img:"https://images.unsplash.com/photo-1580910051074-3eb694886505"},
-{name:"Proveedor Relojes",price:18,img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49"},
-{name:"Proveedor Perfumes",price:17,img:"https://images.unsplash.com/photo-1585386959984-a41552231658"},
-{name:"Todos los proveedores (VIP)",price:45,img:"https://images.unsplash.com/photo-1542744173-8e7e53415bb0"}
+{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png"},
+{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/833/833472.png"},
+{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png"},
+{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png"},
+{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"},
+{name:"Proveedor Tecnología",price:30,img:"https://cdn-icons-png.flaticon.com/512/2721/2721297.png"},
+{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png"},
+{name:"Proveedor Relojes",price:18,img:"https://cdn-icons-png.flaticon.com/512/992/992700.png"},
+{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png"},
+{name:"Todos los proveedores (VIP)",price:45,img:"https://cdn-icons-png.flaticon.com/512/616/616490.png"}
 ];
 
 let cart=[];
@@ -156,34 +141,41 @@ let p=packs[i];
 packDetail.innerHTML=`
 <h2>${p.name}</h2>
 <img src="${p.img}">
-<p>No solo recibes el proveedor. También recibirás una guía completa paso a paso desde cero para generar ingresos, soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-<p>CONTACTOS AL INSTANTE · SOPORTE · GUIA · DESCUENTOS · SEGURIDAD ANTIFALLOS</p>
-<button onclick="addCart(${i})">Agregar al carrito</button>
-<button onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
+<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+<button class="bigBtn" onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
 `;
 go('detalle')
 }
 
 function addCart(i){
-cart.push(packs[i])
-cartCount.innerText=cart.length
-renderCart()
-alert("Producto guardado en carrito")
+cart.push(packs[i]);
+renderCart();
+alert("Producto añadido al carrito");
+}
+
+function removeItem(index){
+cart.splice(index,1);
+renderCart();
 }
 
 function renderCart(){
 cartItems.innerHTML="";
-cart.forEach(p=>{
+cart.forEach((p,i)=>{
 cartItems.innerHTML+=`
-<div style="border:1px solid #fff;padding:10px;margin:10px 0">
+<div class="cartItem">
 <h3>${p.name}</h3>
 <p>${p.price}€</p>
+<div class="flex">
+<button onclick="removeItem(${i})">🗑️ Eliminar</button>
+<button onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
+</div>
 </div>`
 })
 }
 
-renderPacks()
+renderPacks();
 </script>
 
 </body>
