@@ -3,180 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rivelo Mons</title>
-
+<title>Rivelo Packs</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
-body{background:#000;color:#fff}
-
-/* MENU */
-.menu{position:fixed;top:15px;left:15px;z-index:9999;cursor:pointer}
-.menu div{width:30px;height:3px;background:#fff;margin:6px 0}
-
-.sidebar{
-position:fixed;left:-260px;top:0;width:250px;height:100%;
-background:#111;border-right:2px solid #fff;padding:30px;
-transition:.4s;z-index:9998
-}
-.sidebar a{display:block;color:#fff;text-decoration:none;margin:20px 0;font-size:18px}
-.sidebar.active{left:0}
-
-/* SECCIONES */
-.section{display:none;padding:100px 20px;min-height:100vh}
-.activeSection{display:block}
-
-/* HERO */
-.hero{text-align:center;padding-top:120px;animation:fade 2s ease-in-out infinite alternate}
-@keyframes fade{from{opacity:.5}to{opacity:1}}
-.hero h1{font-size:42px}
-
-/* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;margin-top:40px}
-.card{
-border:2px solid #fff;padding:15px;text-align:center;
-border-radius:8px;background:#111;transition:.3s
-}
-.card:hover{border-color:gold;transform:scale(1.05)}
-.card img{width:100%;height:120px;object-fit:contain;background:#fff;border-radius:6px}
-.card button{
-margin-top:10px;padding:12px;border:none;
-background:gold;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:15px
-}
-
-/* DETALLE */
-.packDetail{text-align:center;max-width:800px;margin:auto}
-.packDetail img{width:220px;background:#fff;border-radius:10px;margin:20px 0}
-.bigBtn{
-padding:16px;margin:12px 0;width:100%;
-font-size:18px;font-weight:bold;border:none;
-background:gold;color:#000;cursor:pointer
-}
-
-/* CARRITO */
-.cartItem{
-border:1px solid #fff;margin:12px 0;padding:12px;border-radius:6px
-}
-.cartItem button{
-margin-top:8px;padding:10px;border:none;
-background:gold;color:#000;font-weight:bold;width:48%
-}
-.flex{display:flex;justify-content:space-between;gap:10px}
-
+body{margin:0;font-family:Arial;background:#000;color:#fff}
+.menu{position:fixed;top:15px;left:15px;font-size:30px;cursor:pointer;z-index:9999}
+.sidebar{position:fixed;left:-250px;top:0;width:250px;height:100%;background:#111;padding-top:60px;transition:.3s;z-index:9998}
+.sidebar a{display:block;color:#fff;padding:15px;text-decoration:none}
+.show{left:0}
+header{text-align:center;padding:40px 10px;font-size:28px;border-bottom:2px solid #fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;padding:20px}
+.card{border:2px solid #fff;padding:15px;text-align:center;border-radius:10px}
+.card img{width:80px;height:80px}
+button{padding:10px;border:none;border-radius:8px;margin:5px;cursor:pointer;font-weight:bold}
+.btnGrande{width:100%;padding:18px;font-size:20px;background:#fff;color:#000}
+#detalle{padding:20px}
+#carritoLista img{width:40px}
+.itemCarrito{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #fff;padding:10px 0}
+.adminPanel{display:none;padding:20px}
+.btnBig{padding:12px 20px;font-size:20px}
+input{padding:8px;margin:5px;width:60px;text-align:center}
 </style>
 </head>
 <body>
 
-<div class="menu" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+<div class="menu" onclick="toggle()">☰</div>
 
-<div class="sidebar" id="sidebar">
-<a onclick="go('inicio')">Inicio</a>
-<a onclick="go('catalogo')">Catálogo</a>
-<a onclick="go('carrito')">Carrito</a>
-</div>
-
-<!-- INICIO -->
-<div id="inicio" class="section activeSection">
-<div class="hero">
-<h1>Bienvenido a Rivelo Mons</h1>
-<p>Proveedores privados calidad-precio verificados</p>
-</div>
+<div class="sidebar" id="side">
+<a href="#" onclick="inicio()">Inicio</a>
+<a href="#" onclick="catalogo()">Catálogo</a>
+<a href="#" onclick="verCarrito()">Carrito</a>
+<a href="#" onclick="admin()">Administrador</a>
 </div>
 
-<!-- CATALOGO -->
-<div id="catalogo" class="section">
-<h2>Catálogo</h2>
-<div class="grid" id="packsGrid"></div>
-</div>
+<header>RIVELO PROVEEDORES</header>
 
-<!-- DETALLE -->
-<div id="detalle" class="section">
-<div class="packDetail" id="packDetail"></div>
-</div>
-
-<!-- CARRITO -->
-<div id="carrito" class="section">
-<h2>Tu carrito</h2>
-<div id="cartItems"></div>
-</div>
+<div id="contenido"></div>
+<div id="detalle"></div>
 
 <script>
+const PASS="Rivelo#9274_PROveedores!";
+let carrito=[];
+
 let packs=[
-{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png"},
-{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/833/833472.png"},
-{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png"},
-{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png"},
-{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"},
-{name:"Proveedor Tecnología",price:30,img:"https://cdn-icons-png.flaticon.com/512/2721/2721297.png"},
-{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png"},
-{name:"Proveedor Relojes",price:18,img:"https://cdn-icons-png.flaticon.com/512/992/992700.png"},
-{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png"},
-{name:"Todos los proveedores (VIP)",price:45,img:"https://cdn-icons-png.flaticon.com/512/616/616490.png"}
+{name:"Proveedor de Vapers",price:19,discount:0,img:"https://cdn-icons-png.flaticon.com/512/3659/3659899.png"},
+{name:"Proveedor Pulseras LV",price:19,discount:0,img:"https://cdn-icons-png.flaticon.com/512/3468/3468377.png"},
+{name:"Proveedor Accesorios lujo",price:20,discount:0,img:"https://cdn-icons-png.flaticon.com/512/3075/3075977.png"},
+{name:"Proveedor Botas fútbol",price:25,discount:0,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png"},
+{name:"Proveedor Zapatillas",price:22,discount:0,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png"},
+{name:"Proveedor Tecnología",price:30,discount:0,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png"},
+{name:"Proveedor iPhone/AirPods",price:30,discount:0,img:"https://cdn-icons-png.flaticon.com/512/5977/5977576.png"},
+{name:"Proveedor Relojes",price:18,discount:0,img:"https://cdn-icons-png.flaticon.com/512/992/992651.png"},
+{name:"Proveedor Perfumes",price:17,discount:0,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png"},
+{name:"Todos los proveedores (VIP)",price:45,discount:0,img:"https://cdn-icons-png.flaticon.com/512/616/616490.png"}
 ];
 
-let cart=[];
+function toggle(){side.classList.toggle("show")}
 
-function toggleMenu(){sidebar.classList.toggle("active")}
-function go(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'))
-document.getElementById(id).classList.add('activeSection')
-sidebar.classList.remove("active")
+function inicio(){
+detalle.innerHTML="";
+contenido.innerHTML="<h2 style='padding:20px'>Bienvenido a Rivelo</h2>";
 }
 
-function renderPacks(){
-packsGrid.innerHTML="";
+function catalogo(){
+detalle.innerHTML="";
+contenido.innerHTML="<div class='grid'></div>";
+let g=document.querySelector(".grid");
 packs.forEach((p,i)=>{
-packsGrid.innerHTML+=`
+g.innerHTML+=`
 <div class="card">
 <img src="${p.img}">
 <h3>${p.name}</h3>
-<p>${p.price}€</p>
-<button onclick="ver(${i})">Ver pack</button>
-<button onclick="addCart(${i})">Agregar al carrito</button>
-</div>`
-})
+<p>${p.price-p.discount} €</p>
+<button onclick="verPack(${i})">Ver pack</button>
+<button onclick="addCarrito(${i})">Carrito</button>
+</div>`;
+});
 }
 
-function ver(i){
+function verPack(i){
 let p=packs[i];
-packDetail.innerHTML=`
+contenido.innerHTML="";
+detalle.innerHTML=`
+<div>
+<img src="${p.img}" style="width:150px;display:block;margin:auto">
 <h2>${p.name}</h2>
-<img src="${p.img}">
-<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
-<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-<button class="bigBtn" onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
-`;
-go('detalle')
+<h1>${p.price-p.discount} €</h1>
+<p>
+Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.<br><br>
+Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.
+</p>
+<button class="btnGrande" onclick="addCarrito(${i})">Agregar al carrito</button>
+<button class="btnGrande">Comprar</button>
+</div>`;
 }
 
-function addCart(i){
-cart.push(packs[i]);
-renderCart();
+function addCarrito(i){
+carrito.push(packs[i]);
 alert("Producto añadido al carrito");
 }
 
-function removeItem(index){
-cart.splice(index,1);
-renderCart();
+function verCarrito(){
+contenido.innerHTML="<h2 style='padding:20px'>Carrito</h2><div id='carritoLista'></div>";
+detalle.innerHTML="";
+pintarCarrito();
 }
 
-function renderCart(){
-cartItems.innerHTML="";
-cart.forEach((p,i)=>{
-cartItems.innerHTML+=`
-<div class="cartItem">
-<h3>${p.name}</h3>
-<p>${p.price}€</p>
-<div class="flex">
-<button onclick="removeItem(${i})">🗑️ Eliminar</button>
-<button onclick="alert('Pronto se podrá pagar con tarjeta')">Comprar</button>
-</div>
-</div>`
-})
+function pintarCarrito(){
+let c=document.getElementById("carritoLista");
+c.innerHTML="";
+carrito.forEach((p,i)=>{
+c.innerHTML+=`
+<div class="itemCarrito">
+<img src="${p.img}">
+<span>${p.name} - ${p.price-p.discount}€</span>
+<button onclick="eliminarCarrito(${i})">🗑️</button>
+<button>Comprar</button>
+</div>`;
+});
 }
 
-renderPacks();
+function eliminarCarrito(i){
+carrito.splice(i,1);
+pintarCarrito();
+}
+
+function admin(){
+contenido.innerHTML=`<div style="padding:20px">
+<input type="password" id="pass" placeholder="Contraseña">
+<button onclick="entrar()">Entrar</button>
+</div>`;
+detalle.innerHTML="";
+}
+
+function entrar(){
+if(pass.value===PASS){
+contenido.innerHTML="<div class='adminPanel' id='panel'></div>";
+panel.style.display="block";
+mostrarAdmin();
+}else alert("Contraseña incorrecta");
+}
+
+function mostrarAdmin(){
+let p=document.getElementById("panel");
+p.innerHTML="";
+packs.forEach((pk,i)=>{
+p.innerHTML+=`
+<div style="border-bottom:1px solid #fff;padding:10px">
+<h3>${pk.name}</h3>
+<button class="btnBig" onclick="menos(${i})">-</button>
+<input value="${pk.price}" readonly>
+<button class="btnBig" onclick="mas(${i})">+</button>
+<button class="btnBig" onclick="descuento(${i})">Descuento</button>
+</div>`;
+});
+}
+
+function mas(i){if(packs[i].price<500)packs[i].price++;mostrarAdmin()}
+function menos(i){if(packs[i].price>5)packs[i].price--;mostrarAdmin()}
+function descuento(i){packs[i].discount++;mostrarAdmin()}
+
+inicio();
 </script>
-
 </body>
 </html>
