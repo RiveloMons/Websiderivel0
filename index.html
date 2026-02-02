@@ -68,12 +68,12 @@ button:hover{
 }
 #contenido{
   display:grid;
-  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
   gap:20px;
 }
 .card{
-  background: linear-gradient(135deg,#ffffff,#f0f0f0);
-  color:#000;
+  background:#111;
+  color:#fff;
   border-radius:20px;
   padding:20px;
   box-shadow:0 10px 25px rgba(0,0,0,0.3);
@@ -84,8 +84,12 @@ button:hover{
   transform:scale(1.05);
   box-shadow:0 15px 30px rgba(0,0,0,0.4);
 }
-h2{
+.card img{
+  max-width:100px;
   margin-bottom:15px;
+}
+h2{
+  margin-bottom:10px;
   color:#25D366;
 }
 p{
@@ -96,7 +100,7 @@ p{
   font-weight:bold;
   margin:10px 0;
   font-size:18px;
-  color:#111;
+  color:#fff;
 }
 .vip{
   border:4px solid gold;
@@ -138,20 +142,20 @@ Bienvenido a Rivelo, la fuente privada de proveedores reales. Compra tu pack y r
 <script>
 const PASSWORD="Rivelo#9274_PROveedores!";
 
-// Datos de proveedores
+// Datos de proveedores con logos
 let packs = JSON.parse(localStorage.getItem("riveloPacks")) || [
-{cat:"Chinos", nombre:"VAPERS", precio:"15,20€", numeros:"+86 138 7003 0606"},
-{cat:"Chinos", nombre:"Pulseras LV", precio:"15,20€", numeros:"+86 159 8010 0656"},
-{cat:"Chinos", nombre:"Accesorios de lujo", precio:"25€", numeros:"+86 178 9101 7227"},
-{cat:"Chinos", nombre:"Botas de fútbol", precio:"19,99€", numeros:"+86 177 2083 5685, +86 135 3538 6151, +86 183 1215 9936, +86 157 6835 9931, +86 151 6048 4398, +86 153 0597 2112, +86 193 5944 0554, +86 181 5975 3025, +86 136 1601 7756, +86 130 5569 1894, +86 132 0594 3370"},
-{cat:"Chinos", nombre:"Zapatillas", precio:"15,99€", numeros:"+86 195 7767 7246, +86 133 3845 1248, +86 131 6486 5952, +86 158 9208 5764, +86 153 0609 8139, +86 159 8034 8547, +86 137 9908 8613"},
-{cat:"Chinos", nombre:"Tecnología", precio:"30€", numeros:"+86 183 0385 0813, +86 158 1870 9179, +86 180 3810 0841, +86 158 1865 0060, +86 186 8836 1378"},
-{cat:"Chinos", nombre:"iPhones 1:1 y AirPods", precio:"30€", numeros:"+86 185 1194 9009"},
-{cat:"Chinos", nombre:"Relojes", precio:"15,99€", numeros:"+852 5580 5301, +86 157 6690 3977"},
-{cat:"Chinos", nombre:"Perfumes", precio:"19,99€", numeros:"+86 187 2951 4095, +86 188 2367 5993"},
-{cat:"Español", nombre:"PERFUMES ESPAÑOL", precio:"19,99€", numeros:"+34 600 43 85 76"},
-{cat:"Chinos", nombre:"Tecnología y perfumes", precio:"19,99€", numeros:"+86 183 0385 0813"},
-{cat:"VIP", nombre:"Todos los proveedores", precio:"150€", numeros:"Todos los números"}
+{cat:"Chinos", nombre:"VAPERS", precio:"15,20€", numeros:"+86 138 7003 0606", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Pulseras LV", precio:"15,20€", numeros:"+86 159 8010 0656", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Accesorios de lujo", precio:"25€", numeros:"+86 178 9101 7227", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Botas de fútbol", precio:"19,99€", numeros:"+86 177 2083 5685, +86 135 3538 6151, +86 183 1215 9936, +86 157 6835 9931, +86 151 6048 4398, +86 153 0597 2112, +86 193 5944 0554, +86 181 5975 3025, +86 136 1601 7756, +86 130 5569 1894, +86 132 0594 3370", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Zapatillas", precio:"15,99€", numeros:"+86 195 7767 7246, +86 133 3845 1248, +86 131 6486 5952, +86 158 9208 5764, +86 153 0609 8139, +86 159 8034 8547, +86 137 9908 8613", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Tecnología", precio:"30€", numeros:"+86 183 0385 0813, +86 158 1870 9179, +86 180 3810 0841, +86 158 1865 0060, +86 186 8836 1378", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"iPhones 1:1 y AirPods", precio:"30€", numeros:"+86 185 1194 9009", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Relojes", precio:"15,99€", numeros:"+852 5580 5301, +86 157 6690 3977", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Perfumes", precio:"19,99€", numeros:"+86 187 2951 4095, +86 188 2367 5993", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Español", nombre:"PERFUMES ESPAÑOL", precio:"19,99€", numeros:"+34 600 43 85 76", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"Chinos", nombre:"Tecnología y perfumes", precio:"19,99€", numeros:"+86 183 0385 0813", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"},
+{cat:"VIP", nombre:"Todos los proveedores", precio:"150€", numeros:"Todos los números", logo:"/mnt/data/file_00000000c8d871f4ae65bf49b2c0894f.png"}
 ];
 
 function mostrar(){
@@ -160,6 +164,7 @@ function mostrar(){
   packs.forEach(p=>{
     div.innerHTML+=`
       <div class="card ${p.cat.includes('VIP')?'vip':''}">
+        <img src="${p.logo}" alt="${p.nombre} logo">
         <h2>${p.cat} - ${p.nombre}</h2>
         <p class="price">Precio: ${p.precio}</p>
         <p>${p.numeros}</p>
