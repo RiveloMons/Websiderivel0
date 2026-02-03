@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rivelo Mons PRO</title>
+<title>Rivelo Mons Pro</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;transition:all .3s}
 body{background:#000;color:#fff}
@@ -23,38 +23,35 @@ body{background:#000;color:#fff}
 .activeSection{display:block}
 
 /* PORTADA */
-.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px;transition:opacity .5s;}
+.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px}
 
 /* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:40px}
-.card{border:2px solid #fff;padding:15px;text-align:center;border-radius:8px;transition:.3s;background:#111;opacity:1;transform:scale(1)}
-.card:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(255,255,0,.3);}
-.card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:6px;transition:all .3s}
+.card{border:2px solid #fff;padding:15px;text-align:center;border-radius:8px;transition:.3s;background:#111}
+.card:hover{transform:scale(1.05)}
+.card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:6px}
 .card h3{margin:10px 0;font-size:16px}
 .card p{margin:5px 0;font-size:14px;color:#ff0}
 .card button{margin-top:10px;padding:12px;border:none;background:#fff;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:14px;transition:.2s}
-.card button:hover{background:#ff0;color:#000}
+.card button:hover{background:#ff0}
 
 /* DETALLE PACK */
-.packDetail{text-align:center;max-width:800px;margin:auto;opacity:1;transition:opacity .4s}
+.packDetail{text-align:center;max-width:800px;margin:auto}
 .packDetail img{width:250px;background:#fff;border-radius:10px;margin:20px 0}
 .bigBtn{padding:18px;margin:12px 0;width:100%;font-size:18px;font-weight:bold;border:none;background:#fff;color:#000;cursor:pointer;transition:.2s}
-.bigBtn:hover{background:#ff0;color:#000;}
+.bigBtn:hover{background:#ff0}
 
 /* CARRITO */
-.cartItem{border:1px solid #fff;margin:15px 0;padding:15px;border-radius:8px;background:#111;transition:all .4s;opacity:1}
+.cartItem{border:1px solid #fff;margin:15px 0;padding:15px;border-radius:8px;background:#111}
 .flex{display:flex;gap:10px;flex-wrap:wrap}
 .cartItem button{padding:12px;border:none;background:#fff;color:#000;font-weight:bold;width:48%;cursor:pointer;transition:.2s}
-.cartItem button:hover{background:#ff0;color:#000}
+.cartItem button:hover{background:#ff0}
 
 /* ADMIN */
-#adminPanel{display:none;margin-top:30px;padding:20px;border:2px solid #fff;border-radius:8px;background:#111;position:relative}
+#adminPanel{display:none;margin-top:30px;padding:20px;border:2px solid #fff;border-radius:8px;background:#111}
 #adminPanel input, #adminPanel button, #adminPanel select{margin:6px 0;padding:10px;width:100%;border:none;border-radius:6px}
 #adminPanel button{background:#fff;color:#000;font-weight:bold;cursor:pointer;transition:.2s}
-#adminPanel button:hover{background:#ff0;color:#000}
-
-/* Feedback guardado */
-#feedback{position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:#ff0;color:#000;padding:6px 12px;border-radius:6px;opacity:0;transition:opacity .5s;font-weight:bold}
+#adminPanel button:hover{background:#ff0}
 
 /* FOOTER */
 footer{margin-top:60px;padding:30px 10px;border-top:2px solid #fff;text-align:center;font-size:14px}
@@ -107,7 +104,6 @@ footer a:hover{color:#ff0}
 <button onclick="loginAdmin()">Entrar</button>
 
 <div id="adminPanel">
-<div id="feedback">Guardado!</div>
 <h3>Editar Packs y Portada</h3>
 <label>Imagen de inicio/portada:</label>
 <input type="text" id="portadaInput" placeholder="URL imagen portada">
@@ -123,202 +119,136 @@ Síguenos en redes:<br><br>
 <a href="https://tiktok.com/@rivelo_ms" target="_blank">TikTok</a>
 </footer>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-// -------- CONFIGURA TU FIREBASE AQUI --------
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  databaseURL: "https://TU_PROYECTO.firebaseio.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_MENSAJE_ID",
-  appId: "TU_APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const adminPassword="RiveloPro2026!";
-
-// PACKS POR DEFECTO
-let defaultPacks = [
-  {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
-  {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
-  {name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
-  {name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
-  {name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
-  {name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
-  {name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
-  {name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
-  {name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
-  {name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
+const adminPassword="RiveloPro2026!"; // Contraseña segura
+let packs = JSON.parse(localStorage.getItem("packs")) || [
+{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
+{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
+{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
+{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
+{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
+{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
+{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
+{name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
+{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
+{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
 ];
 
-let packs = [];
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// MENÚ
+// MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
 function go(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
   document.getElementById(id).classList.add('activeSection');
+  // Cerrar menú automáticamente al navegar
   document.getElementById("sidebar").classList.remove("active");
 }
 
-// CARGAR DATOS DESDE FIREBASE
-function loadData(){
-  // Packs
-  db.ref('packs').once('value').then(snapshot=>{
-    if(snapshot.exists()){
-      packs = snapshot.val();
-    } else {
-      packs = defaultPacks;
-      db.ref('packs').set(defaultPacks);
-    }
-    renderPacks();
-    renderCart();
-    renderAdminPacks();
-  });
-  // Portada
-  db.ref('portada').once('value').then(snapshot=>{
-    if(snapshot.exists()){
-      document.getElementById("portadaImg").src = snapshot.val();
-      document.getElementById("portadaInput").value = snapshot.val();
-    }
-  });
-}
-
-// RENDER PACKS CON ANIMACION
+// RENDER PACKS
 function renderPacks(){
-  packsGrid.innerHTML="";
-  packs.forEach((p,i)=>{
-    let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
-    let card = document.createElement('div');
-    card.className='card';
-    card.innerHTML=`
-      <img src="${p.img}" alt="${p.name}">
-      <h3>${p.name}</h3>
-      <p>${priceDisplay}</p>
-      <button onclick="ver(${i})">Ver pack</button>
-      <button onclick="addCart(${i})">Agregar al carrito</button>`;
-    card.style.opacity=0;
-    packsGrid.appendChild(card);
-    setTimeout(()=>{card.style.opacity=1;},50*i);
-  });
-}
+packsGrid.innerHTML="";
+packs.forEach((p,i)=>{
+let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
+packsGrid.innerHTML+=`
+<div class="card">
+<img src="${p.img}" alt="${p.name}">
+<h3>${p.name}</h3>
+<p>${priceDisplay}</p>
+<button onclick="ver(${i})">Ver pack</button>
+<button onclick="addCart(${i})">Agregar al carrito</button>
+</div>`})}
 
 function ver(i){
-  let p=packs[i];
-  let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-  let detalle = document.getElementById("packDetail");
-  detalle.style.opacity=0;
-  setTimeout(()=>{
-    detalle.innerHTML=`
-      <h2>${p.name}</h2>
-      <img src="${p.img}" alt="${p.name}">
-      <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-      <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
-      <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-      <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-      <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
-    detalle.style.opacity=1;
-  },200);
-  go('detalle');
+let p=packs[i];
+let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+packDetail.innerHTML=`
+<h2>${p.name}</h2>
+<img src="${p.img}" alt="${p.name}">
+<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
+go('detalle'); // No se abre menú adicional, solo navega
 }
 
 // CARRITO
-function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Producto añadido al carrito")}
-function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
-function renderCart(){
-  cartItems.innerHTML="";
-  cart.forEach((p,i)=>{
-    let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-    let item = document.createElement('div');
-    item.className='cartItem';
-    item.style.opacity=0;
-    item.innerHTML=`
-      <h3>${p.name}</h3>
-      <p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-      <div class="flex">
-        <button onclick="removeItem(${i})">Eliminar</button>
-        <button onclick="alert('Compra simulada')">Comprar</button>
-      </div>`;
-    cartItems.appendChild(item);
-    setTimeout(()=>{item.style.opacity=1;},50*i);
-  });
-}
+function addCart(i){cart.push(packs[i]);saveData();renderCart();alert("Producto añadido al carrito")}
+function removeItem(i){cart.splice(i,1);saveData();renderCart()}
+function renderCart(){cartItems.innerHTML="";cart.forEach((p,i)=>{
+let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+cartItems.innerHTML+=`
+<div class="cartItem">
+<h3>${p.name}</h3>
+<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<div class="flex">
+<button onclick="removeItem(${i})">Eliminar</button>
+<button onclick="alert('Compra simulada')">Comprar</button>
+</div>
+</div>`})}
 
 // ADMIN
 function loginAdmin(){
-  if(document.getElementById("adminPass").value===adminPassword){
-    document.getElementById("adminPanel").style.display="block";
-    document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
-    renderAdminPacks();showFeedback("Acceso concedido");
-  } else {showFeedback("Contraseña incorrecta")}
-}
+if(document.getElementById("adminPass").value===adminPassword){
+document.getElementById("adminPanel").style.display="block";
+document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
+renderAdminPacks();alert("Acceso concedido")}
+else{alert("Contraseña incorrecta")}}
 
 function savePortada(){
-  let url = document.getElementById("portadaInput").value;
-  db.ref('portada').set(url);
-  showFeedback("Portada actualizada");
+let url = document.getElementById("portadaInput").value;
+document.getElementById("portadaImg").src = url;
+localStorage.setItem("portada", url);
+alert("Portada actualizada")
 }
 
 function renderAdminPacks(){
-  let html="";
-  packs.forEach((p,i)=>{
-    html+=`
-    <div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
-      <input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
-      <input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
-      <input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
-      <input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
-      <button onclick="savePack(${i})">Guardar cambios</button>
-      <button onclick="deletePack(${i})">Eliminar pack</button>
-    </div>`;
-  });
-  adminPacks.innerHTML=html;
+let html="";
+packs.forEach((p,i)=>{
+html+=`
+<div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
+<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
+<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
+<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
+<input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
+<button onclick="savePack(${i})">Guardar cambios</button>
+<button onclick="deletePack(${i})">Eliminar pack</button>
+</div>`});
+adminPacks.innerHTML=html;
 }
 
 function savePack(i){
-  packs[i].name=document.getElementById("name"+i).value;
-  packs[i].price=Number(document.getElementById("price"+i).value);
-  packs[i].img=document.getElementById("img"+i).value;
-  packs[i].discount=Number(document.getElementById("discount"+i).value);
-  db.ref('packs').set(packs);
-  showFeedback("Cambios guardados");
+packs[i].name=document.getElementById("name"+i).value;
+packs[i].price=Number(document.getElementById("price"+i).value);
+packs[i].img=document.getElementById("img"+i).value;
+packs[i].discount=Number(document.getElementById("discount"+i).value);
+saveData();renderPacks();renderAdminPacks();alert("Cambios guardados")
 }
 
 function deletePack(i){
-  if(confirm("¿Eliminar este pack?")){
-    packs.splice(i,1);
-    db.ref('packs').set(packs);
-    showFeedback("Pack eliminado");
-  }
+if(confirm("¿Eliminar este pack?")){packs.splice(i,1);saveData();renderPacks();renderAdminPacks()}
 }
 
 function addNewPack(){
-  packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
-  db.ref('packs').set(packs);
-  showFeedback("Nuevo pack añadido");
+packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
+saveData();renderPacks();renderAdminPacks()
 }
 
-// Feedback flotante
-function showFeedback(msg){
-  const f = document.getElementById("feedback");
-  f.textContent=msg;
-  f.style.opacity=1;
-  setTimeout(()=>{f.style.opacity=0;},2000);
+// LOCAL STORAGE
+function saveData(){
+localStorage.setItem("packs",JSON.stringify(packs));
+localStorage.setItem("cart",JSON.stringify(cart));
+localStorage.setItem("portada",document.getElementById("portadaImg").src);
 }
 
-// Guardar carrito local
-function saveCart(){localStorage.setItem("cart",JSON.stringify(cart))}
+// Recuperar portada guardada
+if(localStorage.getItem("portada")){
+document.getElementById("portadaImg").src = localStorage.getItem("portada");
+}
 
-// CARGAR DATOS AL INICIO
-loadData();
-cart = JSON.parse(localStorage.getItem("cart")) || [];
+renderPacks();
+renderCart();
 </script>
 
 </body>
