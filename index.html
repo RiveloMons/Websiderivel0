@@ -76,7 +76,7 @@ footer a:hover{color:#ff0}
 
 <!-- INICIO -->
 <div id="inicio" class="section activeSection portada">
-<img id="portadaImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABgAAAAQACAIAAACoE...4NWEyNDgtNmY2ZC00NGNlLWI5NDYtZWE1ZjQ5YjE0OGE5dGNsYWltX2dlbmVyYX" alt="Portada">
+<img id="portadaImg" src="portada.jpg" alt="Portada">
 </div>
 
 <!-- CATALOGO -->
@@ -140,7 +140,7 @@ const db = firebase.database();
 // CONTRASEÑA ADMIN
 const adminPassword="RiveloPro21";
 
-// PACKS INICIALES (se usarán solo si no hay datos en Firebase)
+// PACKS INICIALES
 const defaultPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -148,10 +148,10 @@ const defaultPacks = [
 {name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
 {name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
 {name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
-{name:"Proveedor iPhone/Airpods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
+{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
 {name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
 {name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
-{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
+{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0,payhip:"https://payhip.com/b/uZt73"}
 ];
 
 let packs = [];
@@ -206,8 +206,7 @@ packDetail.innerHTML=`
 <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
 <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
+${p.payhip ? `<a href="${p.payhip}" target="_blank"><button class="bigBtn">Comprar ahora</button></a>` : `<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>`}`;
 go('detalle');
 }
 
@@ -253,6 +252,7 @@ html+=`
 <input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
 <input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
 <input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
+${p.payhip ? `<input type="text" value="${p.payhip}" id="payhip${i}" placeholder="Link Payhip">` : ""}
 <button onclick="savePack(${i})">Guardar cambios</button>
 <button onclick="deletePack(${i})">Eliminar pack</button>
 </div>`});
@@ -264,6 +264,7 @@ packs[i].name=document.getElementById("name"+i).value;
 packs[i].price=Number(document.getElementById("price"+i).value);
 packs[i].img=document.getElementById("img"+i).value;
 packs[i].discount=Number(document.getElementById("discount"+i).value);
+if(packs[i].payhip!==undefined){packs[i].payhip=document.getElementById("payhip"+i).value;}
 saveData();renderPacks();renderAdminPacks();alert("Cambios guardados")
 }
 
