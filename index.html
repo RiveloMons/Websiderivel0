@@ -139,7 +139,7 @@ const db = firebase.database();
 <script>
 const adminPassword="RiveloPro2026!";
 
-// PACKS INICIALES
+// Packs iniciales (esto solo se escribe a Firebase la PRIMERA vez)
 let initialPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -156,41 +156,34 @@ let initialPacks = [
 let packs = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
-// Guardar packs y portada inicial en Firebase si está vacío
-db.ref('packs').once('value').then(snap=>{
-  if(!snap.exists()){
-    db.ref('packs').set(initialPacks);
-  }
+// Guardar packs iniciales si la base de datos está vacía
+db.ref('packs').once('value').then(snap => {
+  if(!snap.exists()) db.ref('packs').set(initialPacks);
 });
-db.ref('portada').once('value').then(snap=>{
-  if(!snap.exists()){
-    db.ref('portada').set('portada.jpg');
-  }
+db.ref('portada').once('value').then(snap => {
+  if(!snap.exists()) db.ref('portada').set('portada.jpg');
 });
 
-// Escuchar cambios de packs en Firebase
-db.ref('packs').on('value', snapshot=>{
+// Leer en tiempo real
+db.ref('packs').on('value', snapshot => {
   packs = snapshot.val() || [];
   renderPacks();
 });
-
-// Escuchar cambios de portada
-db.ref('portada').on('value', snapshot=>{
+db.ref('portada').on('value', snapshot => {
   let url = snapshot.val();
-  if(url) document.getElementById("portadaImg").src = url;
+  if(url) document.getElementById('portadaImg').src = url;
 });
 
 // MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
 function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));document.getElementById(id).classList.add('activeSection');document.getElementById("sidebar").classList.remove("active")}
 
-// RENDER PACKS
+// Render packs
 function renderPacks(){
-document.getElementById("packsGrid").innerHTML = "";
+packsGrid.innerHTML = "";
 packs.forEach((p,i)=>{
 let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
-document.getElementById("packsGrid").innerHTML+=`
+packsGrid.innerHTML+=`
 <div class="card">
 <img src="${p.img}" alt="${p.name}">
 <h3>${p.name}</h3>
@@ -199,26 +192,23 @@ document.getElementById("packsGrid").innerHTML+=`
 <button onclick="addCart(${i})">Agregar al carrito</button>
 </div>`})}
 
+// Ver detalle
 function ver(i){
 let p=packs[i];
 let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-document.getElementById("packDetail").innerHTML=`
+packDetail.innerHTML=`
 <h2>${p.name}</h2>
 <img src="${p.img}" alt="${p.name}">
 <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
-<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
 <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
 <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
 go('detalle');
 }
 
-// CART
+// Carrito
 function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Producto añadido al carrito")}
 function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
-function renderCart(){document.getElementById("cartItems").innerHTML="";
-cart.forEach((p,i)=>{
-document.getElementById("cartItems").innerHTML+=`
+function renderCart(){cartItems.innerHTML="";cart.forEach((p,i)=>{cartItems.innerHTML+=`
 <div class="cartItem">
 <h3>${p.name}</h3>
 <p>${p.price}€</p>
@@ -227,57 +217,24 @@ document.getElementById("cartItems").innerHTML+=`
 <button onclick="alert('Compra simulada')">Comprar</button>
 </div>
 </div>`})}
-
 function saveCart(){localStorage.setItem("cart",JSON.stringify(cart))}
 
-// ADMIN
+// Admin
 function loginAdmin(){
 if(document.getElementById("adminPass").value===adminPassword){
 document.getElementById("adminPanel").style.display="block";
 document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
 renderAdminPacks();alert("Acceso concedido")}
-else{alert("Contraseña incorrecta")}
+else alert("Contraseña incorrecta")
 }
 
 function savePortada(){
-let url = document.getElementById("portadaInput").value;
+let url=document.getElementById("portadaInput").value;
 db.ref('portada').set(url);
 alert("Portada actualizada")
 }
 
 function renderAdminPacks(){
 document.getElementById("adminPacks").innerHTML="";
-packs.forEach((p,i)=>{
-document.getElementById("adminPacks").innerHTML+=`
-<div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
-<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
-<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
-<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
-<input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
-<button onclick="savePack(${i})">Guardar cambios</button>
-<button onclick="deletePack(${i})">Eliminar pack</button>
-</div>`})
-}
-
-function savePack(i){
-packs[i].name=document.getElementById("name"+i).value;
-packs[i].price=Number(document.getElementById("price"+i).value);
-packs[i].img=document.getElementById("img"+i).value;
-packs[i].discount=Number(document.getElementById("discount"+i).value);
-db.ref('packs').set(packs);
-renderPacks();
-renderAdminPacks();
-alert("Cambios guardados")
-}
-
-function deletePack(i){
-if(confirm("¿Eliminar este pack?")){packs.splice(i,1);db.ref('packs').set(packs);renderPacks();renderAdminPacks()}
-}
-
-function addNewPack(){
-packs.push({name:"Nuevo pack",price:0,img:"",discount:0});db.ref('packs').set(packs);renderPacks();renderAdminPacks()
-}
-</script>
-
-</body>
-</html>
+packs.forEach((p,i)=>{document.getElementById("adminPacks").innerHTML+=`
+<div style="border:1px solid #fff;padding:10px;margin:10px 0;border
