@@ -23,38 +23,50 @@ body{background:#000;color:#fff}
 .activeSection{display:block}
 
 /* PORTADA */
-.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px}
+.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px;transition:.4s}
 
 /* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:40px}
-.card{border:2px solid #fff;padding:15px;text-align:center;border-radius:8px;background:#111}
+.card{border:2px solid #fff;padding:15px;text-align:center;border-radius:8px;transition:.3s;background:#111;cursor:pointer}
 .card:hover{transform:scale(1.05)}
 .card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:6px}
-.card h3{margin:10px 0;font-size:16px}
-.card p{margin:5px 0;font-size:14px;color:#ff0}
-.card button{margin-top:10px;padding:12px;border:none;background:#fff;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:14px}
+.card h3{margin:10px 0;font-size:16px;transition:.3s}
+.card p{margin:5px 0;font-size:14px;color:#ff0;transition:.3s}
+.card button{margin-top:10px;padding:12px;border:none;background:#fff;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:14px;transition:.2s}
 .card button:hover{background:#ff0}
 
 /* DETALLE PACK */
-.packDetail{text-align:center;max-width:800px;margin:auto}
+.packDetail{text-align:center;max-width:800px;margin:auto;animation:fadeIn 0.5s}
 .packDetail img{width:250px;background:#fff;border-radius:10px;margin:20px 0}
-.bigBtn{padding:18px;margin:12px 0;width:100%;font-size:18px;font-weight:bold;border:none;background:#fff;color:#000;cursor:pointer}
+.bigBtn{padding:18px;margin:12px 0;width:100%;font-size:18px;font-weight:bold;border:none;background:#fff;color:#000;cursor:pointer;transition:.2s}
 .bigBtn:hover{background:#ff0}
 
 /* CARRITO */
 .cartItem{border:1px solid #fff;margin:15px 0;padding:15px;border-radius:8px;background:#111}
 .flex{display:flex;gap:10px;flex-wrap:wrap}
-.cartItem button{padding:12px;border:none;background:#fff;color:#000;font-weight:bold;width:48%;cursor:pointer}
+.cartItem button{padding:12px;border:none;background:#fff;color:#000;font-weight:bold;width:48%;cursor:pointer;transition:.2s}
 .cartItem button:hover{background:#ff0}
 
 /* ADMIN */
 #adminPanel{display:none;margin-top:30px;padding:20px;border:2px solid #fff;border-radius:8px;background:#111}
-#adminPanel input, #adminPanel button{margin:6px 0;padding:10px;width:100%;border:none;border-radius:6px}
-#adminPanel button{background:#fff;color:#000;font-weight:bold;cursor:pointer}
+#adminPanel input, #adminPanel button, #adminPanel select{margin:6px 0;padding:10px;width:100%;border:none;border-radius:6px}
+#adminPanel button{background:#fff;color:#000;font-weight:bold;cursor:pointer;transition:.2s}
 #adminPanel button:hover{background:#ff0}
 
+/* FOOTER */
 footer{margin-top:60px;padding:30px 10px;border-top:2px solid #fff;text-align:center;font-size:14px}
-footer a{color:#fff;text-decoration:none;margin:0 10px}
+footer a{color:#fff;text-decoration:none;margin:0 10px;transition:.2s}
+footer a:hover{color:#ff0}
+
+/* RESPONSIVE */
+@media(max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}; .cartItem button{width:100%}}
+
+/* ANIMACIONES */
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
 </style>
 </head>
 <body>
@@ -68,32 +80,39 @@ footer a{color:#fff;text-decoration:none;margin:0 10px}
 <a onclick="go('admin')">Administrador</a>
 </div>
 
+<!-- INICIO -->
 <div id="inicio" class="section activeSection portada">
-<img id="portadaImg" src="portada.jpg">
+<img id="portadaImg" src="portada.jpg" alt="Portada">
 </div>
 
+<!-- CATALOGO -->
 <div id="catalogo" class="section">
 <h2>Catálogo</h2>
 <div class="grid" id="packsGrid"></div>
 </div>
 
+<!-- DETALLE -->
 <div id="detalle" class="section">
 <div class="packDetail" id="packDetail"></div>
 </div>
 
+<!-- CARRITO -->
 <div id="carrito" class="section">
 <h2>Tu carrito</h2>
 <div id="cartItems"></div>
 </div>
 
+<!-- ADMIN -->
 <div id="admin" class="section">
 <h2>Panel Administrador</h2>
+<p>Introduce la contraseña para editar:</p>
 <input type="password" id="adminPass" placeholder="Contraseña">
 <button onclick="loginAdmin()">Entrar</button>
 
 <div id="adminPanel">
-<label>Imagen portada:</label>
-<input type="text" id="portadaInput">
+<h3>Editar Packs y Portada</h3>
+<label>Imagen de inicio/portada:</label>
+<input type="text" id="portadaInput" placeholder="URL imagen portada">
 <button onclick="savePortada()">Guardar portada</button>
 <div id="adminPacks"></div>
 <button onclick="addNewPack()">Añadir nuevo pack</button>
@@ -101,151 +120,152 @@ footer a{color:#fff;text-decoration:none;margin:0 10px}
 </div>
 
 <footer>
+Síguenos en redes:<br><br>
 <a href="https://instagram.com/riveloms" target="_blank">Instagram</a> |
 <a href="https://tiktok.com/@rivelo_ms" target="_blank">TikTok</a>
 </footer>
 
-<!-- 🔥 FIREBASE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+<script>
 const firebaseConfig = {
-apiKey: "AIzaSyBxhX510lOEhjUbiICpumxaIA7rx7oSsbU",
-authDomain: "rivelo-7d649.firebaseapp.com",
-databaseURL: "https://rivelo-7d649-default-rtdb.firebaseio.com",
-projectId: "rivelo-7d649",
-storageBucket: "rivelo-7d649.firebasestorage.app",
-messagingSenderId: "275278553118",
-appId: "1:275278553118:web:4289e3eace262b43640e0f"
+  apiKey: "AIzaSyBJuvF20LdUjwAZQemybfrYA11zn05wbgY",
+  authDomain: "rivelo-7d649.firebaseapp.com",
+  databaseURL: "https://rivelo-7d649-default-rtdb.firebaseio.com",
+  projectId: "rivelo-7d649",
+  storageBucket: "rivelo-7d649.firebasestorage.app",
+  messagingSenderId: "275278553118",
+  appId: "1:275278553118:web:4289e3eace262b43640e0f",
+  measurementId: "G-624YGQL9M1"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.db=db; window.ref=ref; window.set=set; window.get=get; window.child=child;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 </script>
 
 <script>
 const adminPassword="RiveloPro2026!";
-let packs=[];
-let cart=[];
+let packs = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// CARGAR DATOS DE FIREBASE
+db.ref('packs').on('value', snapshot=>{
+  packs = snapshot.val() || [];
+  renderPacks();
+});
+
+// Portada desde Firebase
+db.ref('portada').on('value', snapshot=>{
+  const url = snapshot.val() || 'portada.jpg';
+  document.getElementById('portadaImg').src = url;
+});
 
 // MENU
-function toggleMenu(){sidebar.classList.toggle("active")}
+function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
 function go(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
-document.getElementById(id).classList.add('activeSection');
-sidebar.classList.remove("active");
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
+  document.getElementById(id).classList.add('activeSection');
+  document.getElementById("sidebar").classList.remove("active");
 }
 
-// 🔥 CARGAR DESDE FIREBASE
-async function loadData(){
-const snap = await get(child(ref(db),'data'));
-if(snap.exists()){
-const data=snap.val();
-packs=data.packs;
-portadaImg.src=data.portada;
-}else{
-packs=[
-{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
-{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
-{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
-{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
-{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
-{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
-{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
-{name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
-{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
-{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
-];
-await saveData();
-}
-renderPacks(); renderAdminPacks();
-}
-
-async function saveData(){
-await set(ref(db,'data'),{
-packs:packs,
-portada:portadaImg.src
-});
-}
-
-// RENDER
+// RENDER PACKS
 function renderPacks(){
 packsGrid.innerHTML="";
 packs.forEach((p,i)=>{
-let price=p.discount?`<del>${p.price}€</del> ${(p.price*(1-p.discount/100)).toFixed(2)}€`:p.price+"€";
+let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
 packsGrid.innerHTML+=`
 <div class="card">
-<img src="${p.img}">
+<img src="${p.img}" alt="${p.name}">
 <h3>${p.name}</h3>
-<p>${price}</p>
+<p>${priceDisplay}</p>
 <button onclick="ver(${i})">Ver pack</button>
 <button onclick="addCart(${i})">Agregar al carrito</button>
-</div>`})
-}
+</div>`})}
 
 function ver(i){
 let p=packs[i];
-packDetail.innerHTML=`<h2>${p.name}</h2>
-<img src="${p.img}">
-<p>${p.price}€</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar</button>`;
+let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+packDetail.innerHTML=`
+<h2>${p.name}</h2>
+<img src="${p.img}" alt="${p.name}">
+<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
 go('detalle');
 }
 
-function addCart(i){cart.push(packs[i]);renderCart()}
-function renderCart(){
-cartItems.innerHTML="";
-cart.forEach((p,i)=>{
-cartItems.innerHTML+=`<div class="cartItem">
+// CARRITO
+function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Producto añadido al carrito")}
+function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
+function renderCart(){cartItems.innerHTML="";cart.forEach((p,i)=>{
+let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+cartItems.innerHTML+=`
+<div class="cartItem">
 <h3>${p.name}</h3>
-<button onclick="cart.splice(${i},1);renderCart()">Eliminar</button>
-</div>`})
-}
+<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<div class="flex">
+<button onclick="removeItem(${i})">Eliminar</button>
+<button onclick="alert('Compra simulada')">Comprar</button>
+</div>
+</div>`})}
 
 // ADMIN
 function loginAdmin(){
-if(adminPass.value===adminPassword){
-adminPanel.style.display="block";
-portadaInput.value=portadaImg.src;
-}
-}
+if(document.getElementById("adminPass").value===adminPassword){
+document.getElementById("adminPanel").style.display="block";
+document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
+renderAdminPacks();alert("Acceso concedido")}
+else{alert("Contraseña incorrecta")}}
 
 function savePortada(){
-portadaImg.src=portadaInput.value;
-saveData();
+let url = document.getElementById("portadaInput").value;
+document.getElementById("portadaImg").src = url;
+db.ref('portada').set(url);
+alert("Portada actualizada")
 }
 
 function renderAdminPacks(){
-adminPacks.innerHTML="";
+let html="";
 packs.forEach((p,i)=>{
-adminPacks.innerHTML+=`
-<div>
-<input value="${p.name}" id="n${i}">
-<input value="${p.price}" id="p${i}">
-<input value="${p.discount}" id="d${i}">
-<input value="${p.img}" id="i${i}">
-<button onclick="savePack(${i})">Guardar</button>
-</div>`
-})
+html+=`
+<div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
+<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
+<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
+<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
+<input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
+<button onclick="savePack(${i})">Guardar cambios</button>
+<button onclick="deletePack(${i})">Eliminar pack</button>
+</div>`});
+adminPacks.innerHTML=html;
 }
 
 function savePack(i){
-packs[i].name=document.getElementById("n"+i).value;
-packs[i].price=Number(document.getElementById("p"+i).value);
-packs[i].discount=Number(document.getElementById("d"+i).value);
-packs[i].img=document.getElementById("i"+i).value;
-saveData(); renderPacks(); renderAdminPacks();
+packs[i].name=document.getElementById("name"+i).value;
+packs[i].price=Number(document.getElementById("price"+i).value);
+packs[i].img=document.getElementById("img"+i).value;
+packs[i].discount=Number(document.getElementById("discount"+i).value);
+db.ref('packs').set(packs);
+renderPacks();
+renderAdminPacks();
+alert("Cambios guardados")
+}
+
+function deletePack(i){
+if(confirm("¿Eliminar este pack?")){packs.splice(i,1);db.ref('packs').set(packs);renderPacks();renderAdminPacks()}
 }
 
 function addNewPack(){
-packs.push({name:"Nuevo pack",price:0,discount:0,img:""});
-saveData(); renderPacks(); renderAdminPacks();
+packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
+db.ref('packs').set(packs);renderPacks();renderAdminPacks()
 }
 
-loadData();
+function saveCart(){
+localStorage.setItem("cart",JSON.stringify(cart));
+}
+
+renderPacks();
+renderCart();
 </script>
 
 </body>
