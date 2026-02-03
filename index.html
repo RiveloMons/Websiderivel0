@@ -105,7 +105,7 @@ footer a:hover{color:#ff0}
 
 <div id="adminPanel">
 <h3>Editar Packs y Portada</h3>
-<label>Imagen de portada:</label>
+<label>Imagen de inicio/portada:</label>
 <input type="text" id="portadaInput" placeholder="URL imagen portada">
 <button onclick="savePortada()">Guardar portada</button>
 <div id="adminPacks"></div>
@@ -120,7 +120,7 @@ Síguenos en redes:<br><br>
 </footer>
 
 <script>
-const adminPassword="RiveloPro2026!"; // Nueva contraseña segura
+const adminPassword="RiveloPro2026!"; // Contraseña segura
 let packs = JSON.parse(localStorage.getItem("packs")) || [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -138,7 +138,7 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
-function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));document.getElementById(id).classList.add('activeSection');toggleMenu()}
+function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));document.getElementById(id).classList.add('activeSection');}
 
 // RENDER PACKS
 function renderPacks(){
@@ -165,7 +165,8 @@ packDetail.innerHTML=`
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
 <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
 <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
-go('detalle')}
+go('detalle'); // No toggleMenu en móvil al ver pack
+}
 
 // CARRITO
 function addCart(i){cart.push(packs[i]);saveData();renderCart();alert("Producto añadido al carrito")}
