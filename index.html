@@ -105,7 +105,7 @@ footer a:hover{color:#ff0}
 
 <div id="adminPanel">
 <h3>Editar Packs y Portada</h3>
-<label>Imagen de inicio/portada:</label>
+<label>Imagen portada:</label>
 <input type="text" id="portadaInput" placeholder="URL imagen portada">
 <button onclick="savePortada()">Guardar portada</button>
 <div id="adminPacks"></div>
@@ -130,8 +130,7 @@ const firebaseConfig = {
   projectId: "rivelo-7d649",
   storageBucket: "rivelo-7d649.firebasestorage.app",
   messagingSenderId: "275278553118",
-  appId: "1:275278553118:web:4289e3eace262b43640e0f",
-  measurementId: "G-624YGQL9M1"
+  appId: "1:275278553118:web:4289e3eace262b43640e0f"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -139,7 +138,9 @@ const db = firebase.database();
 
 <script>
 const adminPassword="RiveloPro2026!";
-let packs = [
+
+// PACKS INICIALES
+let initialPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
 {name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
@@ -151,27 +152,33 @@ let packs = [
 {name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
 {name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
 ];
+
+let packs = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// Guardar packs iniciales en Firebase si no existen
-db.ref('packs').once('value', snap=>{
+
+// Guardar packs y portada inicial en Firebase si está vacío
+db.ref('packs').once('value').then(snap=>{
   if(!snap.exists()){
-    db.ref('packs').set(packs);
+    db.ref('packs').set(initialPacks);
   }
 });
-db.ref('portada').once('value', snap=>{
+db.ref('portada').once('value').then(snap=>{
   if(!snap.exists()){
     db.ref('portada').set('portada.jpg');
   }
 });
 
-// Escuchar cambios en tiempo real
-db.ref('packs').on('value', snap=>{
-  packs = snap.val() || [];
+// Escuchar cambios de packs en Firebase
+db.ref('packs').on('value', snapshot=>{
+  packs = snapshot.val() || [];
   renderPacks();
 });
-db.ref('portada').on('value', snap=>{
-  document.getElementById('portadaImg').src = snap.val() || 'portada.jpg';
+
+// Escuchar cambios de portada
+db.ref('portada').on('value', snapshot=>{
+  let url = snapshot.val();
+  if(url) document.getElementById("portadaImg").src = url;
 });
 
 // MENU
@@ -180,10 +187,10 @@ function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.rem
 
 // RENDER PACKS
 function renderPacks(){
-packsGrid.innerHTML="";
+document.getElementById("packsGrid").innerHTML = "";
 packs.forEach((p,i)=>{
 let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
-packsGrid.innerHTML+=`
+document.getElementById("packsGrid").innerHTML+=`
 <div class="card">
 <img src="${p.img}" alt="${p.name}">
 <h3>${p.name}</h3>
@@ -195,7 +202,7 @@ packsGrid.innerHTML+=`
 function ver(i){
 let p=packs[i];
 let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-packDetail.innerHTML=`
+document.getElementById("packDetail").innerHTML=`
 <h2>${p.name}</h2>
 <img src="${p.img}" alt="${p.name}">
 <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
@@ -206,20 +213,22 @@ packDetail.innerHTML=`
 go('detalle');
 }
 
-// CARRITO
+// CART
 function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Producto añadido al carrito")}
 function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
-function renderCart(){cartItems.innerHTML="";cart.forEach((p,i)=>{
-let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-cartItems.innerHTML+=`
+function renderCart(){document.getElementById("cartItems").innerHTML="";
+cart.forEach((p,i)=>{
+document.getElementById("cartItems").innerHTML+=`
 <div class="cartItem">
 <h3>${p.name}</h3>
-<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<p>${p.price}€</p>
 <div class="flex">
 <button onclick="removeItem(${i})">Eliminar</button>
 <button onclick="alert('Compra simulada')">Comprar</button>
 </div>
 </div>`})}
+
+function saveCart(){localStorage.setItem("cart",JSON.stringify(cart))}
 
 // ADMIN
 function loginAdmin(){
@@ -227,19 +236,19 @@ if(document.getElementById("adminPass").value===adminPassword){
 document.getElementById("adminPanel").style.display="block";
 document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
 renderAdminPacks();alert("Acceso concedido")}
-else{alert("Contraseña incorrecta")}}
+else{alert("Contraseña incorrecta")}
+}
 
 function savePortada(){
 let url = document.getElementById("portadaInput").value;
-document.getElementById("portadaImg").src = url;
 db.ref('portada').set(url);
 alert("Portada actualizada")
 }
 
 function renderAdminPacks(){
-let html="";
+document.getElementById("adminPacks").innerHTML="";
 packs.forEach((p,i)=>{
-html+=`
+document.getElementById("adminPacks").innerHTML+=`
 <div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
 <input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
 <input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
@@ -247,8 +256,7 @@ html+=`
 <input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
 <button onclick="savePack(${i})">Guardar cambios</button>
 <button onclick="deletePack(${i})">Eliminar pack</button>
-</div>`});
-adminPacks.innerHTML=html;
+</div>`})
 }
 
 function savePack(i){
@@ -267,14 +275,8 @@ if(confirm("¿Eliminar este pack?")){packs.splice(i,1);db.ref('packs').set(packs
 }
 
 function addNewPack(){
-packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
-db.ref('packs').set(packs);renderPacks();renderAdminPacks()
+packs.push({name:"Nuevo pack",price:0,img:"",discount:0});db.ref('packs').set(packs);renderPacks();renderAdminPacks()
 }
-
-function saveCart(){localStorage.setItem("cart",JSON.stringify(cart))}
-
-renderPacks();
-renderCart();
 </script>
 
 </body>
