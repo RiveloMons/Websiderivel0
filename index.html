@@ -139,28 +139,44 @@ const db = firebase.database();
 
 <script>
 const adminPassword="RiveloPro2026!";
-let packs = [];
+let packs = [
+{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
+{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
+{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
+{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
+{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
+{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
+{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
+{name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
+{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
+{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
+];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// CARGAR DATOS DE FIREBASE
-db.ref('packs').on('value', snapshot=>{
-  packs = snapshot.val() || [];
-  renderPacks();
+// Guardar packs iniciales en Firebase si no existen
+db.ref('packs').once('value', snap=>{
+  if(!snap.exists()){
+    db.ref('packs').set(packs);
+  }
+});
+db.ref('portada').once('value', snap=>{
+  if(!snap.exists()){
+    db.ref('portada').set('portada.jpg');
+  }
 });
 
-// Portada desde Firebase
-db.ref('portada').on('value', snapshot=>{
-  const url = snapshot.val() || 'portada.jpg';
-  document.getElementById('portadaImg').src = url;
+// Escuchar cambios en tiempo real
+db.ref('packs').on('value', snap=>{
+  packs = snap.val() || [];
+  renderPacks();
+});
+db.ref('portada').on('value', snap=>{
+  document.getElementById('portadaImg').src = snap.val() || 'portada.jpg';
 });
 
 // MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
-function go(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
-  document.getElementById(id).classList.add('activeSection');
-  document.getElementById("sidebar").classList.remove("active");
-}
+function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));document.getElementById(id).classList.add('activeSection');document.getElementById("sidebar").classList.remove("active")}
 
 // RENDER PACKS
 function renderPacks(){
@@ -255,9 +271,7 @@ packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
 db.ref('packs').set(packs);renderPacks();renderAdminPacks()
 }
 
-function saveCart(){
-localStorage.setItem("cart",JSON.stringify(cart));
-}
+function saveCart(){localStorage.setItem("cart",JSON.stringify(cart))}
 
 renderPacks();
 renderCart();
