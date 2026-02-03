@@ -33,7 +33,7 @@ body{background:#000;color:#fff}
 .card h3{margin:10px 0;font-size:16px}
 .card p{margin:5px 0;font-size:14px;color:#ff0}
 .card button{margin-top:10px;padding:12px;border:none;background:#fff;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:14px;transition:.2s}
-.card button:hover{background:#ff0;color:#000;}
+.card button:hover{background:#ff0;color:#000}
 
 /* DETALLE PACK */
 .packDetail{text-align:center;max-width:800px;margin:auto;opacity:1;transition:opacity .4s}
@@ -143,6 +143,20 @@ const db = firebase.database();
 
 const adminPassword="RiveloPro2026!";
 
+// PACKS POR DEFECTO
+let defaultPacks = [
+  {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
+  {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
+  {name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
+  {name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
+  {name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
+  {name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
+  {name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
+  {name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
+  {name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
+  {name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
+];
+
 let packs = [];
 let cart = [];
 
@@ -156,17 +170,23 @@ function go(id){
 
 // CARGAR DATOS DESDE FIREBASE
 function loadData(){
-  db.ref('packs').on('value', snapshot=>{
-    packs = snapshot.val() || [];
+  // Packs
+  db.ref('packs').once('value').then(snapshot=>{
+    if(snapshot.exists()){
+      packs = snapshot.val();
+    } else {
+      packs = defaultPacks;
+      db.ref('packs').set(defaultPacks);
+    }
     renderPacks();
     renderCart();
     renderAdminPacks();
   });
-  db.ref('portada').on('value', snapshot=>{
-    if(snapshot.val()){
-      let img = document.getElementById("portadaImg");
-      img.style.opacity=0;
-      setTimeout(()=>{img.src = snapshot.val(); img.style.opacity=1;},300);
+  // Portada
+  db.ref('portada').once('value').then(snapshot=>{
+    if(snapshot.exists()){
+      document.getElementById("portadaImg").src = snapshot.val();
+      document.getElementById("portadaInput").value = snapshot.val();
     }
   });
 }
