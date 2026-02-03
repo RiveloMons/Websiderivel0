@@ -138,7 +138,12 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
-function go(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));document.getElementById(id).classList.add('activeSection');}
+function go(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
+  document.getElementById(id).classList.add('activeSection');
+  // Cerrar menú automáticamente al navegar
+  document.getElementById("sidebar").classList.remove("active");
+}
 
 // RENDER PACKS
 function renderPacks(){
@@ -165,7 +170,7 @@ packDetail.innerHTML=`
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
 <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
 <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
-go('detalle'); // No toggleMenu en móvil al ver pack
+go('detalle'); // No se abre menú adicional, solo navega
 }
 
 // CARRITO
