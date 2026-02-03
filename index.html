@@ -59,7 +59,8 @@ footer a{color:#fff;text-decoration:none;margin:0 10px;transition:.2s}
 footer a:hover{color:#ff0}
 
 /* RESPONSIVE */
-@media(max-width:600px){.flex{flex-direction:column}.cartItem button{width:100%}}
+@media(max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}; .cartItem button{width:100%}}
 </style>
 </head>
 <body>
@@ -75,7 +76,7 @@ footer a:hover{color:#ff0}
 
 <!-- INICIO -->
 <div id="inicio" class="section activeSection portada">
-<img src="portada.jpg" alt="Portada">
+<img id="portadaImg" src="portada.jpg" alt="Portada">
 </div>
 
 <!-- CATALOGO -->
@@ -103,7 +104,10 @@ footer a:hover{color:#ff0}
 <button onclick="loginAdmin()">Entrar</button>
 
 <div id="adminPanel">
-<h3>Editar Packs</h3>
+<h3>Editar Packs y Portada</h3>
+<label>Imagen de portada:</label>
+<input type="text" id="portadaInput" placeholder="URL imagen portada">
+<button onclick="savePortada()">Guardar portada</button>
 <div id="adminPacks"></div>
 <button onclick="addNewPack()">Añadir nuevo pack</button>
 </div>
@@ -111,13 +115,12 @@ footer a:hover{color:#ff0}
 
 <footer>
 Síguenos en redes:<br><br>
-<a href="#">Instagram</a> |
-<a href="#">TikTok</a> |
-<a href="#">WhatsApp</a>
+<a href="https://instagram.com/riveloms" target="_blank">Instagram</a> |
+<a href="https://tiktok.com/@rivelo_ms" target="_blank">TikTok</a>
 </footer>
 
 <script>
-const adminPassword="1234"; // Cambia tu contraseña
+const adminPassword="RiveloPro2026!"; // Nueva contraseña segura
 let packs = JSON.parse(localStorage.getItem("packs")) || [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -183,8 +186,16 @@ cartItems.innerHTML+=`
 function loginAdmin(){
 if(document.getElementById("adminPass").value===adminPassword){
 document.getElementById("adminPanel").style.display="block";
+document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
 renderAdminPacks();alert("Acceso concedido")}
 else{alert("Contraseña incorrecta")}}
+
+function savePortada(){
+let url = document.getElementById("portadaInput").value;
+document.getElementById("portadaImg").src = url;
+localStorage.setItem("portada", url);
+alert("Portada actualizada")
+}
 
 function renderAdminPacks(){
 let html="";
@@ -222,6 +233,12 @@ saveData();renderPacks();renderAdminPacks()
 function saveData(){
 localStorage.setItem("packs",JSON.stringify(packs));
 localStorage.setItem("cart",JSON.stringify(cart));
+localStorage.setItem("portada",document.getElementById("portadaImg").src);
+}
+
+// Recuperar portada guardada
+if(localStorage.getItem("portada")){
+document.getElementById("portadaImg").src = localStorage.getItem("portada");
 }
 
 renderPacks();
