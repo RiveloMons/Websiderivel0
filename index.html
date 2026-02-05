@@ -69,7 +69,8 @@ footer a:hover{color:#ff0}
 
 <div class="sidebar" id="sidebar">
 <a onclick="go('inicio')">Inicio</a>
-<a onclick="go('catalogo')">Catálogo</a>
+<a onclick="go('catalogo')">Catálogo Proveedores</a>
+<a onclick="go('tienda')">Tienda</a>
 <a onclick="go('carrito')">Carrito</a>
 <a onclick="go('admin')">Administrador</a>
 </div>
@@ -81,8 +82,15 @@ footer a:hover{color:#ff0}
 
 <!-- CATALOGO -->
 <div id="catalogo" class="section">
-<h2>Catálogo</h2>
+<h2>Catálogo Proveedores</h2>
 <div class="grid" id="packsGrid"></div>
+</div>
+
+<!-- TIENDA NORMAL -->
+<div id="tienda" class="section">
+<h2>Compra Normal</h2>
+<p>Aquí puedes agregar productos normales de la tienda, ver precios y añadir al carrito.</p>
+<div class="grid" id="tiendaGrid"></div>
 </div>
 
 <!-- DETALLE -->
@@ -106,8 +114,8 @@ footer a:hover{color:#ff0}
 <div id="adminPanel">
 <h3>Editar Packs y Portada</h3>
 <label>Imagen de inicio/portada:</label>
-<input type="text" id="portadaInput" placeholder="URL imagen portada">
-<button onclick="savePortada()">Guardar portada</button>
+<input type="file" id="portadaInputFile" accept="image/*">
+<button onclick="savePortadaFile()">Guardar portada</button>
 <div id="adminPacks"></div>
 <button onclick="addNewPack()">Añadir nuevo pack</button>
 </div>
@@ -122,6 +130,7 @@ Síguenos en redes:<br><br>
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBJuvF20LdUjwAZQemybfrYA11zn05wbgY",
@@ -134,6 +143,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const storage = firebase.storage();
 </script>
 
 <script>
@@ -142,16 +152,16 @@ const adminPassword="RiveloPro21";
 
 // PACKS INICIALES
 const defaultPacks = [
-{name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
-{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
-{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
-{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
-{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
-{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
-{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
-{name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
-{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
-{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
+{name:"Proveedor de Vapers",price:19,img:"",discount:0},
+{name:"Proveedor Pulseras LV",price:19,img:"",discount:0},
+{name:"Proveedor Accesorios lujo",price:20,img:"",discount:0},
+{name:"Proveedor Botas fútbol",price:25,img:"",discount:0},
+{name:"Proveedor Zapatillas",price:22,img:"",discount:0},
+{name:"Proveedor Tecnología (AirPods)",price:30,img:"",discount:0},
+{name:"Proveedor iPhone/AirPods",price:30,img:"",discount:0},
+{name:"Proveedor Relojes",price:18,img:"",discount:0},
+{name:"Proveedor Perfumes",price:17,img:"",discount:0},
+{name:"Todos los proveedores (VIP)",price:45,img:"",discount:0}
 ];
 
 let packs = [];
@@ -195,7 +205,7 @@ packs.forEach((p,i)=>{
 let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
 grid.innerHTML+=`
 <div class="card">
-<img src="${p.img}" alt="${p.name}">
+<img src="${p.img||'default.jpg'}" alt="${p.name}">
 <h3>${p.name}</h3>
 <p>${priceDisplay}</p>
 <button onclick="ver(${i})">Ver pack</button>
@@ -208,7 +218,7 @@ let p=packs[i];
 let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
 packDetail.innerHTML=`
 <h2>${p.name}</h2>
-<img src="${p.img}" alt="${p.name}">
+<img src="${p.img||'default.jpg'}" alt="${p.name}">
 <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
 <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
 <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
@@ -255,15 +265,19 @@ function saveCart(){
 function loginAdmin(){
 if(document.getElementById("adminPass").value===adminPassword){
 document.getElementById("adminPanel").style.display="block";
-document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
 renderAdminPacks();alert("Acceso concedido")}
 else{alert("Contraseña incorrecta")}}
 
-function savePortada(){
-let url = document.getElementById("portadaInput").value;
-document.getElementById("portadaImg").src = url;
-db.ref("portada").set(url); 
-alert("Portada actualizada")
+function savePortadaFile(){
+const file = document.getElementById("portadaInputFile").files[0];
+if(file){
+const storageRef = storage.ref('portada/'+file.name);
+storageRef.put(file).then(()=>storageRef.getDownloadURL().then(url=>{
+document.getElementById("portadaImg").src=url;
+db.ref("portada").set(url);
+alert("Portada actualizada");
+}))
+}
 }
 
 function renderAdminPacks(){
@@ -274,19 +288,25 @@ html+=`
 <input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
 <input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
 <input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
-<input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
-<button onclick="savePack(${i})">Guardar cambios</button>
+<input type="file" id="imgFile${i}" accept="image/*">
+<button onclick="savePackFile(${i})">Guardar cambios</button>
 <button onclick="deletePack(${i})">Eliminar pack</button>
 </div>`});
 adminPacks.innerHTML=html;
 }
 
-function savePack(i){
+function savePackFile(i){
 packs[i].name=document.getElementById("name"+i).value;
 packs[i].price=Number(document.getElementById("price"+i).value);
-packs[i].img=document.getElementById("img"+i).value;
 packs[i].discount=Number(document.getElementById("discount"+i).value);
-saveData();renderPacks();renderAdminPacks();alert("Cambios guardados")
+const fileInput = document.getElementById("imgFile"+i);
+if(fileInput.files[0]){
+const storageRef = storage.ref('packs/'+fileInput.files[0].name);
+storageRef.put(fileInput.files[0]).then(()=>storageRef.getDownloadURL().then(url=>{
+packs[i].img = url;
+saveData(); renderPacks(); renderAdminPacks(); alert("Cambios guardados");
+}))
+} else {saveData(); renderPacks(); renderAdminPacks(); alert("Cambios guardados");}
 }
 
 function deletePack(i){
