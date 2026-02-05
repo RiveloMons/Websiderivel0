@@ -122,37 +122,51 @@ Síguenos en redes:<br><br>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-/* === TU JS ORIGINAL EXACTO === */
-</script>
+/* TU JS ORIGINAL ENTERO SIN CAMBIOS HASTA renderPacks / ver / renderAdminPacks / savePack */
 
-<!-- === AÑADIDO ÚNICO PARA GALERÍA === -->
-<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBJuvF20LdUjwAZQemybfrYA11zn05wbgY",
+  authDomain: "rivelo-7d649.firebaseapp.com",
+  databaseURL: "https://rivelo-7d649-default-rtdb.firebaseio.com",
+  projectId: "rivelo-7d649",
+  storageBucket: "rivelo-7d649.appspot.com",
+  messagingSenderId: "275278553118",
+  appId: "1:275278553118:web:4289e3eace262b43640e0f"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ... TODO TU CÓDIGO ORIGINAL AQUÍ TAL CUAL ... */
+
+/* ===== AÑADIDO SOLO ESTO AL FINAL ===== */
+
 function seleccionarImagen(callback){
-  const input=document.createElement("input");
-  input.type="file";
-  input.accept="image/*";
-  input.onchange=e=>{
-    const reader=new FileReader();
-    reader.onload=ev=>callback(ev.target.result);
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = ev => callback(ev.target.result);
     reader.readAsDataURL(e.target.files[0]);
   };
   input.click();
 }
 
-document.addEventListener("click",function(e){
-  const adminActivo=document.getElementById("adminPanel").style.display==="block";
-  if(!adminActivo)return;
+document.addEventListener("click", function(e){
+  const adminActivo = document.getElementById("adminPanel").style.display === "block";
+  if(!adminActivo) return;
 
   if(e.target.classList.contains("editable-img")){
-    const index=e.target.getAttribute("data-i");
+    const index = e.target.getAttribute("data-i");
+
     seleccionarImagen(img=>{
-      if(index!==null){
-        packs[index].img=img;
+      if(index !== null){
+        packs[index].img = img;
         saveData();
         renderPacks();
         renderAdminPacks();
-      }else{
-        document.getElementById("portadaImg").src=img;
+      } else {
+        document.getElementById("portadaImg").src = img;
         db.ref("portada").set(img);
       }
     });
