@@ -7,38 +7,60 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;transition:all .3s}
 body{background:#000;color:#fff}
+
+/* MENU */
 .menu{position:fixed;top:15px;left:15px;z-index:1000;cursor:pointer}
 .menu div{width:32px;height:3px;background:#fff;margin:7px 0;transition:.3s}
+
+/* Sidebar */
 .sidebar{position:fixed;left:-280px;top:0;width:260px;height:100%;background:#111;border-right:2px solid #fff;padding:40px 20px;transition:.4s;z-index:999}
 .sidebar a{display:block;color:#fff;text-decoration:none;margin:25px 0;font-size:18px;border-bottom:1px solid #fff;padding-bottom:8px;transition:.3s}
 .sidebar a:hover{color:#ff0}
 .sidebar.active{left:0}
+
+/* SECCIONES */
 .section{display:none;padding:90px 20px;min-height:100vh}
 .activeSection{display:block}
-.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px;cursor:pointer}
+
+/* PORTADA */
+.portada img{width:100%;max-height:90vh;object-fit:cover;border-bottom:2px solid #fff;border-radius:6px}
+
+/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-top:40px}
 .card{border:2px solid #fff;padding:15px;text-align:center;border-radius:8px;transition:.3s;background:#111}
 .card:hover{transform:scale(1.05)}
-.card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:6px;cursor:pointer}
+.card img{width:100%;height:140px;object-fit:contain;background:#fff;border-radius:6px}
 .card h3{margin:10px 0;font-size:16px}
 .card p{margin:5px 0;font-size:14px;color:#ff0}
 .card button{margin-top:10px;padding:12px;border:none;background:#fff;color:#000;font-weight:bold;cursor:pointer;width:100%;font-size:14px;transition:.2s}
 .card button:hover{background:#ff0}
+
+/* DETALLE PACK */
 .packDetail{text-align:center;max-width:800px;margin:auto}
-.packDetail img{width:250px;background:#fff;border-radius:10px;margin:20px 0;cursor:pointer}
+.packDetail img{width:250px;background:#fff;border-radius:10px;margin:20px 0}
 .bigBtn{padding:18px;margin:12px 0;width:100%;font-size:18px;font-weight:bold;border:none;background:#fff;color:#000;cursor:pointer;transition:.2s}
 .bigBtn:hover{background:#ff0}
+
+/* CARRITO */
 .cartItem{border:1px solid #fff;margin:15px 0;padding:15px;border-radius:8px;background:#111}
 .flex{display:flex;gap:10px;flex-wrap:wrap}
 .cartItem button{padding:12px;border:none;background:#fff;color:#000;font-weight:bold;width:48%;cursor:pointer;transition:.2s}
 .cartItem button:hover{background:#ff0}
+
+/* ADMIN */
 #adminPanel{display:none;margin-top:30px;padding:20px;border:2px solid #fff;border-radius:8px;background:#111}
 #adminPanel input, #adminPanel button, #adminPanel select{margin:6px 0;padding:10px;width:100%;border:none;border-radius:6px}
 #adminPanel button{background:#fff;color:#000;font-weight:bold;cursor:pointer;transition:.2s}
 #adminPanel button:hover{background:#ff0}
+
+/* FOOTER */
 footer{margin-top:60px;padding:30px 10px;border-top:2px solid #fff;text-align:center;font-size:14px}
 footer a{color:#fff;text-decoration:none;margin:0 10px;transition:.2s}
 footer a:hover{color:#ff0}
+
+/* RESPONSIVE */
+@media(max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}; .cartItem button{width:100%}}
 </style>
 </head>
 <body>
@@ -52,24 +74,29 @@ footer a:hover{color:#ff0}
 <a onclick="go('admin')">Administrador</a>
 </div>
 
+<!-- INICIO -->
 <div id="inicio" class="section activeSection portada">
-<img id="portadaImg" src="portada.jpg">
+<img id="portadaImg" src="portada.jpg" alt="Portada">
 </div>
 
+<!-- CATALOGO -->
 <div id="catalogo" class="section">
 <h2>Catálogo</h2>
 <div class="grid" id="packsGrid"></div>
 </div>
 
+<!-- DETALLE -->
 <div id="detalle" class="section">
 <div class="packDetail" id="packDetail"></div>
 </div>
 
+<!-- CARRITO -->
 <div id="carrito" class="section">
 <h2>Tu carrito</h2>
 <div id="cartItems"></div>
 </div>
 
+<!-- ADMIN -->
 <div id="admin" class="section">
 <h2>Panel Administrador</h2>
 <p>Introduce la contraseña para editar:</p>
@@ -78,7 +105,9 @@ footer a:hover{color:#ff0}
 
 <div id="adminPanel">
 <h3>Editar Packs y Portada</h3>
-<p>Pulsa cualquier imagen para cambiarla desde tu galería</p>
+<label>Imagen de inicio/portada:</label>
+<input type="text" id="portadaInput" placeholder="URL imagen portada">
+<button onclick="savePortada()">Guardar portada</button>
 <div id="adminPacks"></div>
 <button onclick="addNewPack()">Añadir nuevo pack</button>
 </div>
@@ -90,6 +119,7 @@ Síguenos en redes:<br><br>
 <a href="https://tiktok.com/@rivelo_ms" target="_blank">TikTok</a>
 </footer>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
@@ -104,9 +134,13 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+</script>
 
+<script>
+// CONTRASEÑA ADMIN
 const adminPassword="RiveloPro21";
 
+// PACKS INICIALES
 const defaultPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -120,122 +154,162 @@ const defaultPacks = [
 {name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
 ];
 
-let packs=[],cart=[];
-let userId=localStorage.getItem("userId")||("user_"+Date.now());
-localStorage.setItem("userId",userId);
-
-db.ref("packs").once("value").then(s=>{
-packs=s.exists()?s.val():defaultPacks;
-renderPacks();
-});
-
-db.ref("carts/"+userId).once("value").then(s=>{
-cart=s.exists()?s.val():[];
-renderCart();
-});
-
-db.ref("portada").once("value").then(s=>{
-if(s.exists()) portadaImg.src=s.val();
-});
-
-function toggleMenu(){sidebar.classList.toggle("active")}
-function go(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
-document.getElementById(id).classList.add('activeSection');
-sidebar.classList.remove("active");
+let packs = [];
+let cart = [];
+let userId = localStorage.getItem("userId");
+if(!userId){
+  userId = "user_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+  localStorage.setItem("userId", userId);
 }
 
+// CARGAR DATOS DE FIREBASE
+db.ref("packs").once("value").then(snapshot=>{
+  if(snapshot.exists()){
+    packs = snapshot.val();
+  } else {
+    packs = defaultPacks;
+    db.ref("packs").set(packs);
+  }
+  renderPacks();
+});
+
+// CARGAR CARRITO DEL USUARIO
+db.ref("carts/"+userId).once("value").then(snapshot=>{
+  cart = snapshot.exists() ? snapshot.val() : [];
+  renderCart();
+});
+
+// MENU
+function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
+function go(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
+  document.getElementById(id).classList.add('activeSection');
+  document.getElementById("sidebar").classList.remove("active");
+}
+
+// RENDER PACKS
 function renderPacks(){
-packsGrid.innerHTML="";
+const grid = document.getElementById("packsGrid");
+grid.innerHTML="";
 packs.forEach((p,i)=>{
-packsGrid.innerHTML+=`
+let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
+grid.innerHTML+=`
 <div class="card">
-<img src="${p.img}" class="editable" data-i="${i}">
+<img src="${p.img}" alt="${p.name}">
 <h3>${p.name}</h3>
-<p>${p.price}€</p>
+<p>${priceDisplay}</p>
 <button onclick="ver(${i})">Ver pack</button>
 <button onclick="addCart(${i})">Agregar al carrito</button>
-</div>`;
-});
-}
+</div>`})}
 
+// VER PACK
 function ver(i){
 let p=packs[i];
+let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
 packDetail.innerHTML=`
 <h2>${p.name}</h2>
-<img src="${p.img}" class="editable" data-i="${i}">
-<p>Precio: ${p.price}€</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>`;
+<img src="${p.img}" alt="${p.name}">
+<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
 go('detalle');
 }
 
-function addCart(i){cart.push(packs[i]);saveCart();renderCart()}
-function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
+// CARRITO
+function addCart(i){
+  cart.push(packs[i]);
+  saveCart();
+  renderCart();
+  alert("Producto añadido al carrito");
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  saveCart();
+  renderCart();
+}
+
 function renderCart(){
-cartItems.innerHTML="";
+const cartDiv = document.getElementById("cartItems");
+cartDiv.innerHTML="";
 cart.forEach((p,i)=>{
-cartItems.innerHTML+=`<div class="cartItem"><h3>${p.name}</h3><p>${p.price}€</p>
+let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+cartDiv.innerHTML+=`
+<div class="cartItem">
+<h3>${p.name}</h3>
+<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
 <div class="flex">
 <button onclick="removeItem(${i})">Eliminar</button>
 <button onclick="alert('Compra simulada')">Comprar</button>
-</div></div>`;
-});
-}
-function saveCart(){db.ref("carts/"+userId).set(cart)}
+</div>
+</div>`})}
 
+// GUARDAR CARRITO POR USUARIO
+function saveCart(){
+  db.ref("carts/"+userId).set(cart);
+}
+
+// ADMIN
 function loginAdmin(){
-if(adminPass.value===adminPassword){
-adminPanel.style.display="block";
-renderAdminPacks();
-alert("Acceso concedido");
-}else alert("Contraseña incorrecta");
+if(document.getElementById("adminPass").value===adminPassword){
+document.getElementById("adminPanel").style.display="block";
+document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
+renderAdminPacks();alert("Acceso concedido")}
+else{alert("Contraseña incorrecta")}}
+
+function savePortada(){
+let url = document.getElementById("portadaInput").value;
+document.getElementById("portadaImg").src = url;
+db.ref("portada").set(url); 
+alert("Portada actualizada")
 }
 
 function renderAdminPacks(){
-adminPacks.innerHTML="";
+let html="";
 packs.forEach((p,i)=>{
-adminPacks.innerHTML+=`
+html+=`
 <div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
-<img src="${p.img}" class="editable" data-i="${i}" style="width:120px;background:#fff;border-radius:6px;">
-<input type="text" value="${p.name}" id="name${i}">
-<input type="number" value="${p.price}" id="price${i}">
-<button onclick="savePack(${i})">Guardar</button>
-</div>`;
-});
+<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
+<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
+<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
+<input type="text" value="${p.img}" id="img${i}" placeholder="URL Imagen">
+<button onclick="savePack(${i})">Guardar cambios</button>
+<button onclick="deletePack(${i})">Eliminar pack</button>
+</div>`});
+adminPacks.innerHTML=html;
 }
 
 function savePack(i){
 packs[i].name=document.getElementById("name"+i).value;
 packs[i].price=Number(document.getElementById("price"+i).value);
-db.ref("packs").set(packs);
-renderPacks();renderAdminPacks();
+packs[i].img=document.getElementById("img"+i).value;
+packs[i].discount=Number(document.getElementById("discount"+i).value);
+saveData();renderPacks();renderAdminPacks();alert("Cambios guardados")
 }
 
-document.addEventListener("click",e=>{
-if(!adminPanel.style.display)return;
-if(e.target.classList.contains("editable")){
-const i=e.target.dataset.i;
-const input=document.createElement("input");
-input.type="file";input.accept="image/*";
-input.onchange=ev=>{
-const reader=new FileReader();
-reader.onload=r=>{
-if(i!==undefined){
-packs[i].img=r.target.result;
-db.ref("packs").set(packs);
-renderPacks();renderAdminPacks();
-}else{
-portadaImg.src=r.target.result;
-db.ref("portada").set(r.target.result);
+function deletePack(i){
+if(confirm("¿Eliminar este pack?")){packs.splice(i,1);saveData();renderPacks();renderAdminPacks()}
 }
-};
-reader.readAsDataURL(ev.target.files[0]);
-};
-input.click();
+
+function addNewPack(){
+packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
+saveData();renderPacks();renderAdminPacks()
+}
+
+// GUARDAR DATOS EN FIREBASE
+function saveData(){
+db.ref("packs").set(packs);
+db.ref("portada").set(document.getElementById("portadaImg").src);
+}
+
+// CARGAR PORTADA DE FIREBASE
+db.ref("portada").once("value").then(snapshot=>{
+if(snapshot.exists()){
+document.getElementById("portadaImg").src = snapshot.val();
 }
 });
-
-portadaImg.classList.add("editable");
 </script>
 
 </body>
