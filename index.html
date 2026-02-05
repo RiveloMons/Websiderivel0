@@ -192,50 +192,68 @@ function go(id){
   document.getElementById("sidebar").classList.remove("active");
 }
 
+// CARGAR PORTADA FIREBASE
+db.ref("portada").once("value").then(snapshot=>{
+if(snapshot.exists()){
+document.getElementById("portadaImg").src = snapshot.val();
+}
+});
+
+// FUNCIONES GENERALES
+function setProgress(p){bar.style.width=p+"%";if(p>=100){setTimeout(()=>bar.style.width="0%",500);}}
+function uploadImage(file, callback){
+  const ref = storage.ref("imagenes/" + Date.now() + "_" + file.name);
+  const task = ref.put(file);
+  task.on("state_changed",
+    snap=>setProgress((snap.bytesTransferred/snap.totalBytes)*100),
+    ()=>alert("Error subiendo imagen"),
+    ()=>task.snapshot.ref.getDownloadURL().then(url=>{
+      setProgress(100);
+      callback(url);
+    })
+  );
+}
+
 // RENDER PACKS
 function renderPacks(){
-const grid = document.getElementById("packsGrid");
-grid.innerHTML="";
-packs.forEach((p,i)=>{
-let priceDisplay = p.discount>0 ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` : `${p.price}€`;
-grid.innerHTML+=`
-<div class="card">
-<img src="${p.img}" alt="${p.name}">
-<h3>${p.name}</h3>
-<p>${priceDisplay}</p>
-<button onclick="ver(${i})">Ver pack</button>
-<button onclick="addCart(${i})">Agregar al carrito</button>
-</div>`})}
+  const grid = document.getElementById("packsGrid");
+  grid.innerHTML = "";
+  packs.forEach((p,i)=>{
+    let priceDisplay = p.discount>0 
+      ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` 
+      : `${p.price}€`;
+    let imgSrc = p.img && p.img.length>0 ? p.img : "placeholder.jpg";
+    grid.innerHTML += `
+    <div class="card">
+      <img src="${imgSrc}" alt="${p.name}">
+      <h3>${p.name}</h3>
+      <p>${priceDisplay}</p>
+      <button onclick="ver(${i})">Ver pack</button>
+      <button onclick="addCart(${i})">Agregar al carrito</button>
+    </div>`;
+  });
+}
 
 // VER PACK
 function ver(i){
-let p=packs[i];
-let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-packDetail.innerHTML=`
-<h2>${p.name}</h2>
-<img src="${p.img}" alt="${p.name}">
-<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
-<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
-go('detalle');
+  let p = packs[i];
+  let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+  let imgSrc = p.img && p.img.length>0 ? p.img : "placeholder.jpg";
+
+  packDetail.innerHTML=`
+    <h2>${p.name}</h2>
+    <img src="${imgSrc}" alt="${p.name}">
+    <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+    <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+    <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+    <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+    <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
+  go('detalle');
 }
 
 // CARRITO
-function addCart(i){
-  cart.push(packs[i]);
-  saveCart();
-  renderCart();
-  alert("Producto añadido al carrito");
-}
-
-function removeItem(i){
-  cart.splice(i,1);
-  saveCart();
-  renderCart();
-}
-
+function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Producto añadido al carrito");}
+function removeItem(i){cart.splice(i,1);saveCart();renderCart();}
 function renderCart(){
 const cartDiv = document.getElementById("cartItems");
 cartDiv.innerHTML="";
@@ -250,34 +268,15 @@ cartDiv.innerHTML+=`
 <button onclick="alert('Compra simulada')">Comprar</button>
 </div>
 </div>`})}
-
-// GUARDAR CARRITO
-function saveCart(){db.ref("carts/"+userId).set(cart)}
+function saveCart(){db.ref("carts/"+userId).set(cart);}
 
 // ADMIN
 function loginAdmin(){
 if(document.getElementById("adminPass").value===adminPassword){
 document.getElementById("adminPanel").style.display="block";
-document.getElementById("portadaInput").value=document.getElementById("portadaImg").src;
 renderAdminPacks();alert("Acceso concedido")}
 else{alert("Contraseña incorrecta")}}
 
-function setProgress(p){bar.style.width=p+"%";if(p>=100){setTimeout(()=>bar.style.width="0%",500);}}
-
-function uploadImage(file, callback){
-  const ref = storage.ref("imagenes/" + Date.now() + "_" + file.name);
-  const task = ref.put(file);
-  task.on("state_changed",
-    snap=>setProgress((snap.bytesTransferred/snap.totalBytes)*100),
-    ()=>alert("Error subiendo imagen"),
-    ()=>task.snapshot.ref.getDownloadURL().then(url=>{
-      setProgress(100);
-      callback(url);
-    })
-  );
-}
-
-// PORTADA DESDE GALERÍA
 function savePortada(){
   const input = document.createElement("input");
   input.type = "file";
@@ -292,7 +291,6 @@ function savePortada(){
   input.click();
 }
 
-// ADMIN PACKS
 function renderAdminPacks(){
 let html="";
 packs.forEach((p,i)=>{
@@ -323,7 +321,6 @@ function selectImagePack(i){
   input.click();
 }
 
-// GUARDAR PACK
 function savePack(i){
 packs[i].name=document.getElementById("name"+i).value;
 packs[i].price=Number(document.getElementById("price"+i).value);
@@ -334,30 +331,19 @@ renderAdminPacks();
 alert("Cambios guardados");
 }
 
-// ELIMINAR PACK
 function deletePack(i){
 if(confirm("¿Eliminar este pack?")){packs.splice(i,1);saveData();renderPacks();renderAdminPacks()}
 }
 
-// NUEVO PACK
 function addNewPack(){
 packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
 saveData();renderPacks();renderAdminPacks()
 }
 
-// GUARDAR DATOS FIREBASE
 function saveData(){
 db.ref("packs").set(packs);
 db.ref("portada").set(document.getElementById("portadaImg").src);
 }
-
-// CARGAR PORTADA FIREBASE
-db.ref("portada").once("value").then(snapshot=>{
-if(snapshot.exists()){
-document.getElementById("portadaImg").src = snapshot.val();
-}
-});
 </script>
-
 </body>
 </html>
