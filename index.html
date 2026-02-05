@@ -131,9 +131,18 @@ async function uploadImage(file, path){
 
 <script>
 const adminPassword="RiveloPro21";
+
 const defaultPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
-{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0}
+{name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
+{name:"Proveedor Accesorios lujo",price:20,img:"https://cdn-icons-png.flaticon.com/512/892/892458.png",discount:0},
+{name:"Proveedor Botas fútbol",price:25,img:"https://cdn-icons-png.flaticon.com/512/53/53283.png",discount:0},
+{name:"Proveedor Zapatillas",price:22,img:"https://cdn-icons-png.flaticon.com/512/2589/2589903.png",discount:0},
+{name:"Proveedor Tecnología (AirPods)",price:30,img:"https://cdn-icons-png.flaticon.com/512/1041/1041916.png",discount:0},
+{name:"Proveedor iPhone/AirPods",price:30,img:"https://cdn-icons-png.flaticon.com/512/15/15874.png",discount:0},
+{name:"Proveedor Relojes",price:18,img:"reloj.jpg",discount:0},
+{name:"Proveedor Perfumes",price:17,img:"https://cdn-icons-png.flaticon.com/512/2936/2936886.png",discount:0},
+{name:"Todos los proveedores (VIP)",price:45,img:"vip.jpg",discount:0}
 ];
 
 let packs = [];
@@ -144,69 +153,104 @@ if(!userId){
   localStorage.setItem("userId", userId);
 }
 
+// CARGAR DATOS DE FIREBASE
 db.ref("packs").once("value").then(snapshot=>{
-  if(snapshot.exists()){ packs = snapshot.val(); }
-  else{ packs = defaultPacks; db.ref("packs").set(packs); }
+  if(snapshot.exists()){
+    packs = snapshot.val();
+  } else {
+    packs = defaultPacks;
+    db.ref("packs").set(packs);
+  }
   renderPacks();
 });
 
+// CARGAR CARRITO DEL USUARIO
 db.ref("carts/"+userId).once("value").then(snapshot=>{
   cart = snapshot.exists() ? snapshot.val() : [];
   renderCart();
 });
 
-function toggleMenu(){sidebar.classList.toggle("active")}
+// MENU
+function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
 function go(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
   document.getElementById(id).classList.add('activeSection');
-  sidebar.classList.remove("active");
+  document.getElementById("sidebar").classList.remove("active");
 }
 
+// RENDER PACKS
 function renderPacks(){
 const grid = document.getElementById("packsGrid");
 grid.innerHTML="";
 packs.forEach((p,i)=>{
+let priceDisplay = p.discount>0 
+? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` 
+: `${p.price}€`;
 grid.innerHTML+=`
 <div class="card">
-<img src="${p.img}">
+<img src="${p.img}" alt="${p.name}">
 <h3>${p.name}</h3>
-<p>${p.price}€</p>
+<p>${priceDisplay}</p>
 <button onclick="ver(${i})">Ver pack</button>
 <button onclick="addCart(${i})">Agregar al carrito</button>
 </div>`})}
 
+// VER PACK
 function ver(i){
 let p=packs[i];
+let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
 packDetail.innerHTML=`
 <h2>${p.name}</h2>
-<img src="${p.img}">
-<p>Precio: ${p.price}€</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>`;
+<img src="${p.img}" alt="${p.name}">
+<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
 go('detalle');
 }
 
-function addCart(i){cart.push(packs[i]);saveCart();renderCart();alert("Añadido")}
-function removeItem(i){cart.splice(i,1);saveCart();renderCart()}
+// CARRITO
+function addCart(i){
+  cart.push(packs[i]);
+  saveCart();
+  renderCart();
+  alert("Producto añadido al carrito");
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  saveCart();
+  renderCart();
+}
+
 function renderCart(){
-cartItems.innerHTML="";
+const cartDiv = document.getElementById("cartItems");
+cartDiv.innerHTML="";
 cart.forEach((p,i)=>{
-cartItems.innerHTML+=`
+let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+cartDiv.innerHTML+=`
 <div class="cartItem">
 <h3>${p.name}</h3>
-<p>${p.price}€</p>
+<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
 <div class="flex">
 <button onclick="removeItem(${i})">Eliminar</button>
 <button onclick="alert('Compra simulada')">Comprar</button>
 </div>
 </div>`})}
-function saveCart(){db.ref("carts/"+userId).set(cart);}
 
+// GUARDAR CARRITO
+function saveCart(){
+  db.ref("carts/"+userId).set(cart);
+}
+
+// ADMIN
 function loginAdmin(){
-if(adminPass.value===adminPassword){
-adminPanel.style.display="block";
+if(document.getElementById("adminPass").value===adminPassword){
+document.getElementById("adminPanel").style.display="block";
 renderAdminPacks();
 alert("Acceso concedido")}
-else alert("Contraseña incorrecta")
+else{alert("Contraseña incorrecta")}
 }
 
 function renderAdminPacks(){
@@ -214,37 +258,60 @@ let html="";
 packs.forEach((p,i)=>{
 html+=`
 <div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
-<input type="text" value="${p.name}" id="name${i}">
-<input type="number" value="${p.price}" id="price${i}">
+<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
+<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
+<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
+
 <label>Imagen del pack:</label>
 <input type="file" id="file${i}" accept="image/*">
+
 <button onclick="savePack(${i})">Guardar cambios</button>
+<button onclick="deletePack(${i})">Eliminar pack</button>
 </div>`});
-adminPacks.innerHTML=html;
+document.getElementById("adminPacks").innerHTML=html;
 }
 
 async function savePortada(){
-let file = portadaFile.files[0];
-if(!file){ alert("Selecciona imagen"); return; }
+let file = document.getElementById("portadaFile").files[0];
+if(!file){ alert("Selecciona una imagen"); return; }
 let url = await uploadImage(file, "portada_"+Date.now());
-portadaImg.src = url;
-db.ref("portada").set(url);
+document.getElementById("portadaImg").src = url;
+db.ref("portada").set(url); 
 alert("Portada actualizada");
 }
 
 async function savePack(i){
-packs[i].name=name[i].value;
-packs[i].price=Number(price[i].value);
+packs[i].name = document.getElementById("name"+i).value;
+packs[i].price = Number(document.getElementById("price"+i).value);
+packs[i].discount = Number(document.getElementById("discount"+i).value);
+
 let file = document.getElementById("file"+i).files[0];
 if(file){
   let url = await uploadImage(file, "pack_"+i+"_"+Date.now());
-  packs[i].img=url;
+  packs[i].img = url;
 }
+
 db.ref("packs").set(packs);
 renderPacks();
 renderAdminPacks();
-alert("Guardado");
+alert("Cambios guardados correctamente");
 }
+
+function deletePack(i){
+if(confirm("¿Eliminar este pack?")){packs.splice(i,1);db.ref("packs").set(packs);renderPacks();renderAdminPacks()}
+}
+
+function addNewPack(){
+packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
+db.ref("packs").set(packs);
+renderPacks();
+renderAdminPacks();
+}
+
+// CARGAR PORTADA
+db.ref("portada").once("value").then(snapshot=>{
+if(snapshot.exists()){ document.getElementById("portadaImg").src = snapshot.val(); }
+});
 </script>
 </body>
 </html>
