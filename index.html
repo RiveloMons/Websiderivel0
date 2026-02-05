@@ -123,15 +123,14 @@ const db = firebase.database();
 const storage = firebase.storage();
 
 async function uploadImage(file, path){
-  const ref = storage.ref().child(path);
-  await ref.put(file);
-  return await ref.getDownloadURL();
+    const ref = storage.ref().child(path);
+    await ref.put(file);
+    return await ref.getDownloadURL();
 }
 </script>
 
 <script>
 const adminPassword="RiveloPro21";
-
 const defaultPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -149,168 +148,158 @@ let packs = [];
 let cart = [];
 let userId = localStorage.getItem("userId");
 if(!userId){
-  userId = "user_" + Date.now() + "_" + Math.floor(Math.random()*10000);
-  localStorage.setItem("userId", userId);
+    userId = "user_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+    localStorage.setItem("userId", userId);
 }
 
-// CARGAR DATOS DE FIREBASE
+// CARGAR DATOS
 db.ref("packs").once("value").then(snapshot=>{
-  if(snapshot.exists()){
-    packs = snapshot.val();
-  } else {
-    packs = defaultPacks;
-    db.ref("packs").set(packs);
-  }
-  renderPacks();
+    if(snapshot.exists()){ packs = snapshot.val(); }
+    else { packs = defaultPacks; db.ref("packs").set(packs); }
+    renderPacks();
 });
 
-// CARGAR CARRITO DEL USUARIO
 db.ref("carts/"+userId).once("value").then(snapshot=>{
-  cart = snapshot.exists() ? snapshot.val() : [];
-  renderCart();
+    cart = snapshot.exists() ? snapshot.val() : [];
+    renderCart();
 });
 
 // MENU
 function toggleMenu(){document.getElementById("sidebar").classList.toggle("active")}
 function go(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
-  document.getElementById(id).classList.add('activeSection');
-  document.getElementById("sidebar").classList.remove("active");
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('activeSection'));
+    document.getElementById(id).classList.add('activeSection');
+    document.getElementById("sidebar").classList.remove("active");
 }
 
 // RENDER PACKS
 function renderPacks(){
-const grid = document.getElementById("packsGrid");
-grid.innerHTML="";
-packs.forEach((p,i)=>{
-let priceDisplay = p.discount>0 
-? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` 
-: `${p.price}€`;
-grid.innerHTML+=`
-<div class="card">
-<img src="${p.img}" alt="${p.name}">
-<h3>${p.name}</h3>
-<p>${priceDisplay}</p>
-<button onclick="ver(${i})">Ver pack</button>
-<button onclick="addCart(${i})">Agregar al carrito</button>
-</div>`})}
+    const grid = document.getElementById("packsGrid");
+    grid.innerHTML="";
+    packs.forEach((p,i)=>{
+        let priceDisplay = p.discount>0 
+            ? `<span style="text-decoration:line-through;color:#f00">${p.price}€</span> <span>${(p.price*(1-p.discount/100)).toFixed(2)}€</span>` 
+            : `${p.price}€`;
+        grid.innerHTML+=`
+        <div class="card">
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${priceDisplay}</p>
+            <button onclick="ver(${i})">Ver pack</button>
+            <button onclick="addCart(${i})">Agregar al carrito</button>
+        </div>`;
+    });
+}
 
 // VER PACK
 function ver(i){
-let p=packs[i];
-let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-packDetail.innerHTML=`
-<h2>${p.name}</h2>
-<img src="${p.img}" alt="${p.name}">
-<p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-<p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
-<p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
-<button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
-<button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
-go('detalle');
+    let p=packs[i];
+    let finalPrice = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+    packDetail.innerHTML=`
+        <h2>${p.name}</h2>
+        <img src="${p.img}" alt="${p.name}">
+        <p>Precio: ${finalPrice}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+        <p>Soporte 24/7, descuentos exclusivos, y acceso a contactos privados verificados.</p>
+        <p>Este pack está pensado para personas que quieren empezar a revender con proveedores reales, con la mejor relación calidad-precio del mercado.</p>
+        <button class="bigBtn" onclick="addCart(${i})">Agregar al carrito</button>
+        <button class="bigBtn" disabled>Pronto se podrá pagar</button>`;
+    go('detalle');
 }
 
 // CARRITO
-function addCart(i){
-  cart.push(packs[i]);
-  saveCart();
-  renderCart();
-  alert("Producto añadido al carrito");
-}
-
-function removeItem(i){
-  cart.splice(i,1);
-  saveCart();
-  renderCart();
-}
-
+function addCart(i){ cart.push(packs[i]); saveCart(); renderCart(); alert("Producto añadido al carrito"); }
+function removeItem(i){ cart.splice(i,1); saveCart(); renderCart(); }
 function renderCart(){
-const cartDiv = document.getElementById("cartItems");
-cartDiv.innerHTML="";
-cart.forEach((p,i)=>{
-let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
-cartDiv.innerHTML+=`
-<div class="cartItem">
-<h3>${p.name}</h3>
-<p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
-<div class="flex">
-<button onclick="removeItem(${i})">Eliminar</button>
-<button onclick="alert('Compra simulada')">Comprar</button>
-</div>
-</div>`})}
-
-// GUARDAR CARRITO
-function saveCart(){
-  db.ref("carts/"+userId).set(cart);
+    const cartDiv = document.getElementById("cartItems");
+    cartDiv.innerHTML="";
+    cart.forEach((p,i)=>{
+        let priceDisplay = p.discount>0 ? (p.price*(1-p.discount/100)).toFixed(2) : p.price;
+        cartDiv.innerHTML+=`
+        <div class="cartItem">
+            <h3>${p.name}</h3>
+            <p>${priceDisplay}€ ${p.discount>0?`<span style="color:#f00;">(${p.discount}% OFF)</span>`:""}</p>
+            <div class="flex">
+                <button onclick="removeItem(${i})">Eliminar</button>
+                <button onclick="alert('Compra simulada')">Comprar</button>
+            </div>
+        </div>`;
+    });
 }
+function saveCart(){ db.ref("carts/"+userId).set(cart); }
 
 // ADMIN
 function loginAdmin(){
-if(document.getElementById("adminPass").value===adminPassword){
-document.getElementById("adminPanel").style.display="block";
-renderAdminPacks();
-alert("Acceso concedido")}
-else{alert("Contraseña incorrecta")}
+    if(document.getElementById("adminPass").value===adminPassword){
+        document.getElementById("adminPanel").style.display="block";
+        renderAdminPacks();
+        alert("Acceso concedido");
+    } else { alert("Contraseña incorrecta"); }
 }
 
 function renderAdminPacks(){
-let html="";
-packs.forEach((p,i)=>{
-html+=`
-<div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
-<input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
-<input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
-<input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
-
-<label>Imagen del pack:</label>
-<input type="file" id="file${i}" accept="image/*">
-
-<button onclick="savePack(${i})">Guardar cambios</button>
-<button onclick="deletePack(${i})">Eliminar pack</button>
-</div>`});
-document.getElementById("adminPacks").innerHTML=html;
+    let html="";
+    packs.forEach((p,i)=>{
+        html+=`
+        <div style="border:1px solid #fff;padding:10px;margin:10px 0;border-radius:6px;">
+            <input type="text" value="${p.name}" id="name${i}" placeholder="Nombre">
+            <input type="number" value="${p.price}" id="price${i}" placeholder="Precio">
+            <input type="number" value="${p.discount}" id="discount${i}" placeholder="Descuento %" min="0" max="100">
+            <label>Imagen del pack:</label>
+            <input type="file" id="file${i}" accept="image/*">
+            <button onclick="savePack(${i})">Guardar cambios</button>
+            <button onclick="deletePack(${i})">Eliminar pack</button>
+        </div>`;
+    });
+    document.getElementById("adminPacks").innerHTML=html;
 }
 
 async function savePortada(){
-let file = document.getElementById("portadaFile").files[0];
-if(!file){ alert("Selecciona una imagen"); return; }
-let url = await uploadImage(file, "portada_"+Date.now());
-document.getElementById("portadaImg").src = url;
-db.ref("portada").set(url); 
-alert("Portada actualizada");
+    let file = document.getElementById("portadaFile").files[0];
+    if(!file){ alert("Selecciona una imagen"); return; }
+    try{
+        let url = await uploadImage(file, "portada_" + Date.now());
+        document.getElementById("portadaImg").src = url;
+        await db.ref("portada").set(url);
+        alert("Portada actualizada correctamente");
+    } catch(e){ console.error(e); alert("Error al subir la portada"); }
 }
 
 async function savePack(i){
-packs[i].name = document.getElementById("name"+i).value;
-packs[i].price = Number(document.getElementById("price"+i).value);
-packs[i].discount = Number(document.getElementById("discount"+i).value);
-
-let file = document.getElementById("file"+i).files[0];
-if(file){
-  let url = await uploadImage(file, "pack_"+i+"_"+Date.now());
-  packs[i].img = url;
-}
-
-db.ref("packs").set(packs);
-renderPacks();
-renderAdminPacks();
-alert("Cambios guardados correctamente");
+    packs[i].name = document.getElementById("name"+i).value;
+    packs[i].price = Number(document.getElementById("price"+i).value);
+    packs[i].discount = Number(document.getElementById("discount"+i).value);
+    let file = document.getElementById("file"+i).files[0];
+    if(file){
+        try{
+            let url = await uploadImage(file, "pack_"+i+"_"+Date.now());
+            packs[i].img = url;
+        } catch(e){ console.error(e); alert("Error al subir imagen del pack"); return; }
+    }
+    await db.ref("packs").set(packs);
+    renderPacks();
+    renderAdminPacks();
+    alert("Cambios guardados correctamente");
 }
 
 function deletePack(i){
-if(confirm("¿Eliminar este pack?")){packs.splice(i,1);db.ref("packs").set(packs);renderPacks();renderAdminPacks()}
+    if(confirm("¿Eliminar este pack?")){
+        packs.splice(i,1);
+        db.ref("packs").set(packs);
+        renderPacks();
+        renderAdminPacks();
+    }
 }
 
 function addNewPack(){
-packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
-db.ref("packs").set(packs);
-renderPacks();
-renderAdminPacks();
+    packs.push({name:"Nuevo pack",price:0,img:"",discount:0});
+    db.ref("packs").set(packs);
+    renderPacks();
+    renderAdminPacks();
 }
 
 // CARGAR PORTADA
 db.ref("portada").once("value").then(snapshot=>{
-if(snapshot.exists()){ document.getElementById("portadaImg").src = snapshot.val(); }
+    if(snapshot.exists()){ document.getElementById("portadaImg").src = snapshot.val(); }
 });
 </script>
 </body>
