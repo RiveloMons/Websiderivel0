@@ -140,7 +140,7 @@ const db = firebase.database();
 // CONTRASEÑA ADMIN
 const adminPassword="RiveloPro21";
 
-// PACKS INICIALES (se usarán solo si no hay datos en Firebase)
+// PACKS INICIALES
 const defaultPacks = [
 {name:"Proveedor de Vapers",price:19,img:"https://cdn-icons-png.flaticon.com/512/2933/2933245.png",discount:0},
 {name:"Proveedor Pulseras LV",price:19,img:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png",discount:0},
@@ -156,6 +156,11 @@ const defaultPacks = [
 
 let packs = [];
 let cart = [];
+let userId = localStorage.getItem("userId");
+if(!userId){
+  userId = "user_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+  localStorage.setItem("userId", userId);
+}
 
 // CARGAR DATOS DE FIREBASE
 db.ref("packs").once("value").then(snapshot=>{
@@ -168,7 +173,8 @@ db.ref("packs").once("value").then(snapshot=>{
   renderPacks();
 });
 
-db.ref("cart").once("value").then(snapshot=>{
+// CARGAR CARRITO DEL USUARIO
+db.ref("carts/"+userId).once("value").then(snapshot=>{
   cart = snapshot.exists() ? snapshot.val() : [];
   renderCart();
 });
@@ -212,8 +218,19 @@ go('detalle');
 }
 
 // CARRITO
-function addCart(i){cart.push(packs[i]);saveData();renderCart();alert("Producto añadido al carrito")}
-function removeItem(i){cart.splice(i,1);saveData();renderCart()}
+function addCart(i){
+  cart.push(packs[i]);
+  saveCart();
+  renderCart();
+  alert("Producto añadido al carrito");
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  saveCart();
+  renderCart();
+}
+
 function renderCart(){
 const cartDiv = document.getElementById("cartItems");
 cartDiv.innerHTML="";
@@ -229,6 +246,11 @@ cartDiv.innerHTML+=`
 </div>
 </div>`})}
 
+// GUARDAR CARRITO POR USUARIO
+function saveCart(){
+  db.ref("carts/"+userId).set(cart);
+}
+
 // ADMIN
 function loginAdmin(){
 if(document.getElementById("adminPass").value===adminPassword){
@@ -240,7 +262,7 @@ else{alert("Contraseña incorrecta")}}
 function savePortada(){
 let url = document.getElementById("portadaInput").value;
 document.getElementById("portadaImg").src = url;
-db.ref("portada").set(url); // Guardar en Firebase
+db.ref("portada").set(url); 
 alert("Portada actualizada")
 }
 
@@ -279,7 +301,6 @@ saveData();renderPacks();renderAdminPacks()
 // GUARDAR DATOS EN FIREBASE
 function saveData(){
 db.ref("packs").set(packs);
-db.ref("cart").set(cart);
 db.ref("portada").set(document.getElementById("portadaImg").src);
 }
 
