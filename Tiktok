@@ -68,6 +68,11 @@ button:hover {
     font-weight: bold;
 }
 
+.stock {
+    color: orange;
+    font-weight: bold;
+}
+
 .reviews {
     text-align: left;
     margin-top: 20px;
@@ -85,33 +90,35 @@ button:hover {
 <div class="container">
     <div class="product">
 
-        <img src="https://via.placeholder.com/220">
+        <img src="https://i.imgur.com/8Km9tLL.png">
 
         <h2>Auriculares Inalámbricos PRO</h2>
 
         <div class="old-price">59,99€</div>
         <div class="price">29,99€</div>
 
-        <p class="timer">Oferta termina en: <span id="countdown"></span></p>
+        <p class="timer">⏳ Oferta termina en: <span id="countdown"></span></p>
+        <p class="stock">⚠️ Solo quedan <span id="stock">7</span> unidades</p>
 
         <button onclick="comprar()">COMPRAR AHORA</button>
 
         <div class="reviews">
             <h3>Opiniones:</h3>
-            ⭐⭐⭐⭐⭐ "Se escuchan brutal"  
-            ⭐⭐⭐⭐⭐ "Me llegaron en 10 días"  
-            ⭐⭐⭐⭐ "Muy buena calidad"
+            ⭐⭐⭐⭐⭐ "Se escuchan brutal" <br>
+            ⭐⭐⭐⭐⭐ "Me llegaron en 10 días" <br>
+            ⭐⭐⭐⭐ "Muy buena calidad" <br>
         </div>
 
     </div>
 </div>
 
 <script>
+// LINK DE PAGO (CAMBIA ESTO)
 function comprar() {
     window.location.href = "https://TU-LINK-DE-PAGO.com";
 }
 
-// contador 10 minutos
+// CONTADOR TIEMPO
 let tiempo = 600;
 
 setInterval(() => {
@@ -121,6 +128,17 @@ setInterval(() => {
         min + ":" + (sec < 10 ? "0" : "") + sec;
     tiempo--;
 }, 1000);
+
+// STOCK FALSO DINÁMICO
+let stock = 7;
+
+setInterval(() => {
+    if(stock > 1){
+        stock--;
+        document.getElementById("stock").innerText = stock;
+    }
+}, 8000);
+
 </script>
 
 </body>
