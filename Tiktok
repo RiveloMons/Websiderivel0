@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auriculares Pro</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f2f2f2;
+}
+
+header {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.product {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+img {
+    width: 220px;
+}
+
+.price {
+    font-size: 30px;
+    color: green;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: gray;
+}
+
+button {
+    background: black;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #333;
+}
+
+.timer {
+    color: red;
+    font-weight: bold;
+}
+
+.reviews {
+    text-align: left;
+    margin-top: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+🔥 OFERTA LIMITADA HOY 🔥
+</header>
+
+<div class="container">
+    <div class="product">
+
+        <img src="https://via.placeholder.com/220">
+
+        <h2>Auriculares Inalámbricos PRO</h2>
+
+        <div class="old-price">59,99€</div>
+        <div class="price">29,99€</div>
+
+        <p class="timer">Oferta termina en: <span id="countdown"></span></p>
+
+        <button onclick="comprar()">COMPRAR AHORA</button>
+
+        <div class="reviews">
+            <h3>Opiniones:</h3>
+            ⭐⭐⭐⭐⭐ "Se escuchan brutal"  
+            ⭐⭐⭐⭐⭐ "Me llegaron en 10 días"  
+            ⭐⭐⭐⭐ "Muy buena calidad"
+        </div>
+
+    </div>
+</div>
+
+<script>
+function comprar() {
+    window.location.href = "https://TU-LINK-DE-PAGO.com";
+}
+
+// contador 10 minutos
+let tiempo = 600;
+
+setInterval(() => {
+    let min = Math.floor(tiempo / 60);
+    let sec = tiempo % 60;
+    document.getElementById("countdown").innerHTML =
+        min + ":" + (sec < 10 ? "0" : "") + sec;
+    tiempo--;
+}, 1000);
+</script>
+
+</body>
+</html>
